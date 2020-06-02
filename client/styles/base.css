@@ -1,0 +1,42 @@
+body {
+  background-color: #1A1E21;
+}
+
+p {
+  color: aliceblue;
+}
+h1 {
+  color: aliceblue;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+.forca-container {
+  display: flex;
+}
+
+.infos-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.placar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.placar-container p {
+  text-align: end;
+}
+
+.palavra-container {
+  display: flex;
+}
+
+.letras-container {
+  display: flex;
+}

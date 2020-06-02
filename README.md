@@ -1,4 +1,19 @@
-# ForcaForcaJequiti
+
+<h2 align="center">
+<img width="30px" src="https://image.flaticon.com/icons/svg/3004/3004327.svg">
+Forca Forca Jequiti  
+</h2>
+
+<p align="center">
+  <sub>Desenvolvido com ❤︎ por </br>
+    <a href="https://github.com/MatheusMuriel">Matheus Muriel</a> e
+    <a href="https://github.com/guilhermemanhani">Guilherme Manhani</a> 
+    </a>
+  </sub>  
+</p>
+
+
+----
 Projeto da diciplina de Sistemas Distribuidos
 
 

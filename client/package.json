@@ -2,7 +2,7 @@
   "name": "client",
   "version": "1.0.0",
   "description": "Client do Forca Forca Jequiti",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/MatheusMuriel/ForcaForcaJequiti/issues"
   },
-  "homepage": "https://github.com/MatheusMuriel/ForcaForcaJequiti#readme"
+  "homepage": "https://github.com/MatheusMuriel/ForcaForcaJequiti#readme",
+  "devDependencies": {
+    "electron": "^9.0.1"
+  }
 }

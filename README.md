@@ -6,6 +6,10 @@ Projeto da diciplina de Sistemas Distribuidos
 **Cliente**: [Electron](https://www.electronjs.org/)  
 **Servidor**:[Python](https://www.python.org/)
 
+### Sockets
+**Cliente**: [Socket.io](https://socket.io/)  
+**Servidor**: [Python Native Sockets](https://docs.python.org/3.3/library/socket.html)  
+
 
 ### RPC
 **Cliente**: [Electron RPC API](https://www.npmjs.com/package/electron-rpc-api)  

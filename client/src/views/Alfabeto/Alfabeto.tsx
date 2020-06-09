@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { girarRoleta } from "../../services/silvioSantos";
 
 interface Letra {
   letra: string,
@@ -35,7 +36,7 @@ interface Alfabeto {
 }
 
 interface Props {
-  onLetraClicked: (letra: string) => void;
+  onLetraClicked: (letra: string, pontos: number) => void;
 }
 
 const Alfabeto: React.FC<Props> = ({ onLetraClicked }) => {
@@ -150,11 +151,14 @@ const Alfabeto: React.FC<Props> = ({ onLetraClicked }) => {
     const altered_alfabeto = {...alfabeto};
     altered_alfabeto[letra].clicked = true;
     setAlfabeto(altered_alfabeto);
-    onLetraClicked(letra)
+    onLetraClicked(letra, pontos)
   }
+
+  const pontos = girarRoleta();
 
   return (
     <div>
+      <h1>Valendo: {pontos}</h1>
       {
         Object.keys(alfabeto).map(key => (
           <button 

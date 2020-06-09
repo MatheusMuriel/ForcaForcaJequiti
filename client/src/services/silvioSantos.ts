@@ -14,13 +14,18 @@ const palavraSecreta: string = "BATATA";
 const letrasTentadas: string[] = [];
 const jogadores: Jogador[] = [
   {
-    nome: "Matheus",
-    pontuacao: 88888,
+    nome: "Jogador 1",
+    pontuacao: 0,
     status: statusJogador.JOGANDO
   },
   {
-    nome: "Muriel",
-    pontuacao: 99999,
+    nome: "Jogador 2",
+    pontuacao: 0,
+    status: statusJogador.ESPERANDO
+  },
+  {
+    nome: "Jogador 3",
+    pontuacao: 0,
     status: statusJogador.ESPERANDO
   }
 ]
@@ -31,18 +36,32 @@ export function getPalavra() {
   return palavraMask;
 }
 
-export function computarTentativa(letra: string, jogador: Jogador) {
-  const indJog = jogadores.findIndex( j => j.nome == jogador.nome);
+export function computarTentativa(letra: string, pontos: number) {
+  const indJog = jogadores.findIndex( j => j.status == statusJogador.JOGANDO);
+  
+  if (palavraSecreta.includes(letra)) {
+    jogadores[indJog].pontuacao += pontos;
+  }
+  letrasTentadas.push(letra);
+
+  if (!getPalavra().includes("_")){
+    alert(`O jogador ${jogadores[indJog].nome} ganhou! \nCom ${jogadores[indJog].pontuacao} pontos!`);
+  }
+  
   jogadores[indJog].status = statusJogador.ESPERANDO;
 
-  if (indJog < jogadores.length){  
+  if (indJog+1 < jogadores.length){  
     jogadores[indJog + 1].status = statusJogador.JOGANDO;
   } else {
     jogadores[0].status = statusJogador.JOGANDO;
   }
+}
 
-  letrasTentadas.push(letra);
-  console.log(jogadores);
+export function girarRoleta() {
+  const min = 10;
+  const max = 1000;
+  const pontos = Math.floor(Math.random() * (max - min)) + min;
+  return pontos;
 }
 
 export function registerJogador(nome: string): Jogador {

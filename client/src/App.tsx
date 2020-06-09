@@ -11,22 +11,13 @@ import { computarTentativa, registerJogador, Jogador, statusJogador } from "./se
 import "./styles/main.scss";
 
 function App() {
-  const [jogador, setJogador] = useState<Jogador>({nome:'', pontuacao:0, status: statusJogador.NULL});
 
   const [letrasTentadas, setLetrasTentadas] = useState<string[]>([]);
 
-  function handleLetraClicked(letra: string) {
+  function handleLetraClicked(letra: string, pontos: number) {
     const letras_atted = [...letrasTentadas, letra];
     setLetrasTentadas(letras_atted);
-    computarTentativa(letra, jogador);
-  }
-
-  function handleCadMatheus() {
-    setJogador(registerJogador("Matheus"));
-  }
-
-  function handleCadMuriel() {
-    setJogador(registerJogador("Muriel"));
+    computarTentativa(letra, pontos);
   }
 
   return (
@@ -48,8 +39,6 @@ function App() {
 
         <div className="letras-container">
           <Alfabeto onLetraClicked={handleLetraClicked}></Alfabeto>
-          <button onClick={handleCadMatheus}>Registrar Matheus</button>
-          <button onClick={handleCadMuriel}>Registrar Muriel</button>
         </div>
       </div>
     </div>

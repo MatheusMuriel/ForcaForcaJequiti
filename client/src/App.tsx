@@ -4,12 +4,15 @@ import { hot } from "react-hot-loader/root";
 import Forca from "./views/Forca/Forca";
 import Alfabeto from "./views/Alfabeto/Alfabeto";
 import Palavra from "./views/Palavra/Palavra";
+import Placar from "./views/Placar/Placar";
 
-import { computarTentativa } from "./services/silvioSantos";
+import { computarTentativa, registerJogador } from "./services/silvioSantos";
 
 import "./styles/main.scss";
 
 function App() {
+  //const jogador = registerJogador("Matheus");
+
   const [letrasTentadas, setLetrasTentadas] = useState<string[]>([]);
 
   function handleLetraClicked(letra: string) {
@@ -27,7 +30,7 @@ function App() {
 
       <div className="infos-container">
         <div className="placar-container">
-          <div id="placar"></div>
+          <Placar></Placar>
         </div>
 
         <div className="palavra-container">

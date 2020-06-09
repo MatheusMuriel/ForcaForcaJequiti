@@ -6,7 +6,7 @@ import Alfabeto from "./views/Alfabeto/Alfabeto";
 import Palavra from "./views/Palavra/Palavra";
 import Placar from "./views/Placar/Placar";
 
-import { computarTentativa, registerJogador, Jogador, statusJogador } from "./services/silvioSantos";
+import { computarTentativa } from "./services/silvioSantos";
 
 import "./styles/main.scss";
 

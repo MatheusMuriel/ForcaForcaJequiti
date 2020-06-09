@@ -10,6 +10,7 @@ export interface Jogador {
   status: statusJogador
 }
 
+let enforcamento: number = 0;
 const palavraSecreta: string = "BATATA";
 const letrasTentadas: string[] = [];
 const jogadores: Jogador[] = [
@@ -36,11 +37,17 @@ export function getPalavra() {
   return palavraMask;
 }
 
+export function getEnforcamento() {
+  return enforcamento;
+}
+
 export function computarTentativa(letra: string, pontos: number) {
   const indJog = jogadores.findIndex( j => j.status == statusJogador.JOGANDO);
   
   if (palavraSecreta.includes(letra)) {
     jogadores[indJog].pontuacao += pontos;
+  } else {
+    enforcamento += 1;
   }
   letrasTentadas.push(letra);
 

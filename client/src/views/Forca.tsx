@@ -13,19 +13,7 @@ const Forca = () => {
   }
 
   return (
-    <div className="layout">
-      <img src={forca} alt="..." />
-      <div className="container">
-        <div className="sidebar">
-        </div>
-        <div className="header">
-          <h1>My Application</h1>
-        </div>
-        <div className="footer">
-          <p>Today is: {getTime()}</p>
-        </div>
-      </div>
-    </div>
+    <img src={forca} alt="..." />
   );
 }
 

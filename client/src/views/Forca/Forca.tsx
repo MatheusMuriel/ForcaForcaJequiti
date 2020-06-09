@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import forca from '../assets/forca.svg'; // Tell webpack this JS file uses this image
+import forca from '../../assets/forca.svg'; // Tell webpack this JS file uses this image
 
 const Forca = () => {
 

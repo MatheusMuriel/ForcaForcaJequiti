@@ -1,13 +1,17 @@
 import * as React from "react";
 import { hot } from "react-hot-loader/root";
 
-import Forca from "./views/Forca";
-import Alfabeto from "./views/Alfabeto";
+import Forca from "./views/Forca/Forca";
+import Alfabeto from "./views/Alfabeto/Alfabeto";
 
 import "./styles/main.scss";
 
 //<Forca></Forca>
 function App() {
+  function handleLetraClicked(letra: string) {
+    console.log(letra);
+  }
+
   return (
     <div className="container">
 
@@ -25,7 +29,7 @@ function App() {
         </div>
 
         <div className="letras-container">
-          <Alfabeto></Alfabeto>
+          <Alfabeto onLetraClicked={handleLetraClicked}></Alfabeto>
         </div>
       </div>
     </div>

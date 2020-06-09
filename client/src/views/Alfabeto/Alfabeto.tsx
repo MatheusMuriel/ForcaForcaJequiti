@@ -35,8 +35,11 @@ interface Alfabeto {
   Z: Letra
 }
 
+interface Props {
+  onLetraClicked: (letra: string) => void;
+}
 
-const Alfabeto = () => {
+const Alfabeto: React.FC<Props> = ({ onLetraClicked }) => {
   const [alfabeto, setAlfabeto] = useState<Alfabeto>({
     A: {
       letra: 'A',
@@ -148,6 +151,7 @@ const Alfabeto = () => {
     const altered_alfabeto = {...alfabeto};
     altered_alfabeto[letra].clicked = true;
     setAlfabeto(altered_alfabeto);
+    onLetraClicked(letra)
   }
 
   return (

@@ -1616,6 +1616,13 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
 
+"@types/react-app@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@types/react-app/-/react-app-1.0.5.tgz#b220292a574b75a4408c640899e59fec0c10a570"
+  integrity sha512-EOvVsA3ug1DwEaDtS3OuktFaYa7p/KQ0eYfjBVAg8s4UTkK9HfM+d3wFHKcuf6DiUXPAUSlJo6qJyc2Bl2H8LA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-dom@^16.9.8":
   version "16.9.8"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.8.tgz#fe4c1e11dfc67155733dfa6aa65108b4971cb423"

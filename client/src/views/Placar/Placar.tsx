@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getJogadores, Jogador } from "../../services/silvioSantos";
+import { getJogadores, Jogador, statusJogador } from "../../services/silvioSantos";
 
 interface Props {
   
@@ -10,9 +10,12 @@ const Placar: React.FC<Props> = ({}) => {
 
   return (
     <div>
+      <p>* = Jogador da vez</p>
       {
         getJogadores().map(jogador => (
-          <p key={jogador.nome}>{jogador.nome} - {jogador.pontuacao}</p>
+          <p key={jogador.nome}>
+            {jogador.status == statusJogador.JOGANDO ? '*' : '' }{jogador.nome} - {jogador.pontuacao}
+          </p>
         ))
       }
     </div>

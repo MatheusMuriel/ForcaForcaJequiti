@@ -6,12 +6,8 @@ interface Props {
 }
 
 const Palavra: React.FC<Props> = ({letrasTentadas}) => {
-  function handleCli() {
-    liberate();
-  }
   return (
     <div>
-      <button onClick={handleCli}></button>
       <h1>{getPalavra()}</h1>
     </div>
   );

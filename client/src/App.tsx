@@ -1,15 +1,21 @@
-import * as React from "react";
+import React, { useState } from 'react';
 import { hot } from "react-hot-loader/root";
 
 import Forca from "./views/Forca/Forca";
 import Alfabeto from "./views/Alfabeto/Alfabeto";
+import Palavra from "./views/Palavra/Palavra";
+
+import { computarTentativa } from "./services/silvioSantos";
 
 import "./styles/main.scss";
 
-//<Forca></Forca>
 function App() {
+  const [letrasTentadas, setLetrasTentadas] = useState<string[]>([]);
+
   function handleLetraClicked(letra: string) {
-    console.log(letra);
+    const letras_atted = [...letrasTentadas, letra];
+    setLetrasTentadas(letras_atted);
+    computarTentativa(letra);
   }
 
   return (
@@ -25,7 +31,7 @@ function App() {
         </div>
 
         <div className="palavra-container">
-          <h1>AA_A_AA_AAAA_AAA</h1>
+          <Palavra letrasTentadas={letrasTentadas}></Palavra>
         </div>
 
         <div className="letras-container">

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export interface ILayoutProps {
 }
 
-export const Layout: React.FunctionComponent<ILayoutProps> = ({ children }) => {
+const Forca = () => {
 
     const getTime = () => {
         let now = new Date();
@@ -18,14 +18,10 @@ export const Layout: React.FunctionComponent<ILayoutProps> = ({ children }) => {
         <div className="layout">
             <div className="container">
                 <div className="sidebar">
-                    <Link to="/">Foo</Link>
-                    <Link to="/bar">Bar</Link>
+                    
                 </div>
                 <div className="header">
                     <h1>My Application</h1>
-                </div>
-                <div className="body">
-                    {children}
                 </div>
                 <div className="footer">
                     <p>Today is: {getTime()}</p>
@@ -34,3 +30,7 @@ export const Layout: React.FunctionComponent<ILayoutProps> = ({ children }) => {
         </div>
     );
 }
+
+
+//export const Forca: React.FunctionComponent<ILayoutProps>
+export default Forca;

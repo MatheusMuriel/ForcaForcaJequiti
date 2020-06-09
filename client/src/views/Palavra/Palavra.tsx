@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { getPalavra, liberate } from "../../services/silvioSantos";
+import React, { useState, useEffect } from 'react';
+import { getPalavra } from "../../services/silvioSantos";
 
 interface Props {
   letrasTentadas: string[];
 }
 
 const Palavra: React.FC<Props> = ({letrasTentadas}) => {
+  
   return (
     <div>
       <h1>{getPalavra()}</h1>

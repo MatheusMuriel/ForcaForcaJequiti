@@ -31,6 +31,10 @@ const jogadores: Jogador[] = [
   }
 ]
 
+export function iniciarNovoGame() {
+  
+}
+
 export function getPalavra() {
   const palavraArr = palavraSecreta.split('');
   const palavraMask = palavraArr.map( letra => letrasTentadas.includes(letra) ? letra : '_');

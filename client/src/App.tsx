@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { hot } from "react-hot-loader/root";
 
 import Forca from "./views/Forca/Forca";
@@ -6,11 +6,15 @@ import Alfabeto from "./views/Alfabeto/Alfabeto";
 import Palavra from "./views/Palavra/Palavra";
 import Placar from "./views/Placar/Placar";
 
-import { computarTentativa } from "./services/silvioSantos";
+import { iniciarNovoGame, computarTentativa } from "./services/silvioSantos";
 
 import "./styles/main.scss";
 
 function App() {
+
+  useEffect(() => {
+    iniciarNovoGame();
+  }, []);
 
   const [letrasTentadas, setLetrasTentadas] = useState<string[]>([]);
 

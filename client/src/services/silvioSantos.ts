@@ -38,7 +38,7 @@ const jogadores: Jogador[] = [
 export function iniciarNovoGame() {
   const socket = socketIOClient(ENDPOINT);
     socket.emit("my_message", "Maoe! Hello World!");
-    socket.on("my_response", data => {
+    socket.on("my_response", (data: string) => {
       console.log(data);
     });
 }

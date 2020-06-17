@@ -7,23 +7,15 @@ interface Props {
 
 const Palavra: React.FC<Props> = ({letrasTentadas}) => {
 
-  const [palavraCount, setPalavraCount] = useState(0);
+  const [palavra, setPalavra] = useState<String[]>([]);
 
   socket.on('atualizacao_palavra', (data: string[]) => {
-    setPalavraCount(palavraCount + 1);
     setPalavra(data);
   });
 
-  const [palavra, setPalavra] = useState<String[]>([]);
-
-  useEffect(() => {
-    const _palavra = getPalavra();
-    //setPalavra(_palavra);
-  }, [palavraCount]);
-  
   return (
     <div>
-      <h1>{palavraCount}{palavra}</h1>
+      <h1>{palavra}</h1>
     </div>
   );
 }

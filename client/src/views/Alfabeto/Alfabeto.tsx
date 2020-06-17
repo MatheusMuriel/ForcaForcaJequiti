@@ -147,13 +147,14 @@ const Alfabeto: React.FC<Props> = ({ onLetraClicked }) => {
     }
   });
 
+  socket.on("atualizacao_tentativas", (letrasTentadas: string[]) => {
+    const altered_alfabeto = {...alfabeto};
+    letrasTentadas.forEach( l => altered_alfabeto[l].clicked = true )
+    setAlfabeto(altered_alfabeto);
+  })
+
   function handleLetraClick(letra: string) {
     socket.emit("tentativa", letra);
-
-    const altered_alfabeto = {...alfabeto};
-    altered_alfabeto[letra].clicked = true;
-    setAlfabeto(altered_alfabeto);
-    //onLetraClicked(letra, pontos)
   }
 
   const pontos = girarRoleta();

@@ -18,6 +18,7 @@ function createWindow() {
             nodeIntegration: true
         }
     });
+    win.removeMenu();
 
     if (IS_DEV) {
         win.loadURL(DEV_SERVER_URL);

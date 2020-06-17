@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getJogadores, Jogador, statusJogador } from "../../services/silvioSantos";
 
-interface Props {
-  
-}
-
-const Placar: React.FC<Props> = ({}) => {
+const Placar = () => {
   const [jogadores, setJogadores] = useState<Jogador[]>(getJogadores());
 
   useEffect(() => {

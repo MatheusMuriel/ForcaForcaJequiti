@@ -1,7 +1,7 @@
 from aiohttp import web
 import asyncio
 import socketio
-import json
+import time
 
 sio = socketio.AsyncServer(async_mode="aiohttp", cors_allowed_origins="*")
 app = web.Application()
@@ -51,11 +51,41 @@ async def responder(event, message, sid):
 ######################
 
 @sio.event
+async def inicar_jogo(sid):
+  global jogadores
+  print(jogadores)
+  if (sid in jogadores):
+    await atts_vira_rodada(sid)
+  else: 
+    await ask_novo_jogador(sid)
+
+
+@sio.event
 async def tentativa(sid, letra):
   computar_tentativa(letra, "")
+  await atts_vira_rodada(sid)
+
+async def atts_vira_rodada(sid): 
   await att_palavra(sid)
   await att_tentativas(sid)
   await att_enforcamento(sid)
+
+@sio.event
+async def novo_nome(sid, nome):
+  global jogadores
+  jogador = {
+    "nome": nome,
+    "pontuacao": 0,
+    "status": "ESPERANDO"
+  }
+  jogadores[sid] = jogador
+  await informa_novo_jogador(sid)
+
+async def ask_novo_jogador(sid):
+  await sio.emit("perguntar_novo_jogador", sid=sid)
+
+async def informa_novo_jogador(sid):
+  await sio.emit("registrado", sid=sid)
 
 async def att_palavra(sid):
   plvr = mask_palavra()

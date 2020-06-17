@@ -1,0 +1,31 @@
+
+
+.formRegistro {
+  display: flex;
+  flex-direction: column;
+  background-color: whitesmoke;
+  width: 30%;
+  height: 30%;
+
+  align-items: center;
+  justify-content: center;
+
+  border-style: solid;
+  border-color: black;
+
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  font-family: 'Nanum Gothic', sans-serif;
+  color: black;
+}
+
+.mensagem>p {
+  text-align: center;
+  font-size: 16px;
+  color: black;
+}
+
+.Inputgroup {
+  display: flex;
+  flex-direction: column;
+}

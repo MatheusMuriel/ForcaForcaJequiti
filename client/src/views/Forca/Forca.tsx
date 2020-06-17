@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getEnforcamento } from "../../services/silvioSantos";
+import { socket } from "../../services/silvioSantos";
 
 import './style.scss';
 
@@ -16,11 +16,10 @@ const Forca = () => {
   const forcas = [forca0, forca1, forca2, forca3, forca4, forca5, forca6, forca7];
   
   const [srcForca, setSrcForca] = useState<string>(forca0);
-
-  useEffect(() => {
-    const nivel = getEnforcamento();
-    setSrcForca(forcas[nivel]);
-  }, [getEnforcamento()]);
+  
+  socket.on("atualizacao_enforcamento", (enforc: number) => {
+    setSrcForca(forcas[enforc]);
+  });
 
   return (
     <img src={srcForca} alt="..." className="forca" />

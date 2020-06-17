@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { girarRoleta, socket } from "../../services/silvioSantos";
+import { socket } from "../../services/silvioSantos";
 
 interface Letra {
   letra: string,
@@ -35,11 +35,9 @@ interface Alfabeto {
   Z: Letra
 }
 
-interface Props {
-  onLetraClicked: (letra: string, pontos: number) => void;
-}
+const Alfabeto = () => {
 
-const Alfabeto: React.FC<Props> = ({ onLetraClicked }) => {
+  const [roleta, setRoleta] = useState(0);
   const [alfabeto, setAlfabeto] = useState<Alfabeto>({
     A: {
       letra: 'A',
@@ -153,15 +151,17 @@ const Alfabeto: React.FC<Props> = ({ onLetraClicked }) => {
     setAlfabeto(altered_alfabeto);
   })
 
+  socket.on("atualizacao_roleta", (pontos: number) => {
+    setRoleta(pontos);
+  })
+
   function handleLetraClick(letra: string) {
     socket.emit("tentativa", letra);
   }
 
-  const pontos = girarRoleta();
-
   return (
     <div>
-      <h1>Valendo: {pontos}</h1>
+      <h1>Valendo: {roleta}</h1>
       {
         Object.keys(alfabeto).map(key => (
           <button 

@@ -6,52 +6,30 @@ import Alfabeto from "./views/Alfabeto/Alfabeto";
 import Palavra from "./views/Palavra/Palavra";
 import Placar from "./views/Placar/Placar";
 
-import { iniciarNovoGame, computarTentativa } from "./services/silvioSantos";
-
-import socketIOClient from "socket.io-client";
-const ENDPOINT = "http://localhost:5000";
+import { socket } from "./services/silvioSantos";
 
 import "./styles/main.scss";
 
 function App() {
 
-  const [response, setResponse] = useState("");
-
   useEffect(() => {
-     
+    // Iniciar Novo jogo
   }, []);
-
-  useEffect(() => {
-    iniciarNovoGame();
-  }, []);
-
-  const [letrasTentadas, setLetrasTentadas] = useState<string[]>([]);
-
-  function handleLetraClicked(letra: string, pontos: number) {
-    const letras_atted = [...letrasTentadas, letra];
-    setLetrasTentadas(letras_atted);
-    computarTentativa(letra, pontos);
-  }
 
   return (
-    
     <div className="container">
-
       <div className="forca-container">
         <Forca></Forca>
       </div>
-
       <div className="infos-container">
         <div className="placar-container">
           <Placar></Placar>
         </div>
-
         <div className="palavra-container">
-          <Palavra letrasTentadas={letrasTentadas}></Palavra>
+          <Palavra></Palavra>
         </div>
-
         <div className="letras-container">
-          <Alfabeto onLetraClicked={handleLetraClicked}></Alfabeto>
+          <Alfabeto></Alfabeto>
         </div>
       </div>
     </div>

@@ -66,7 +66,7 @@ export function computarTentativa(letra: string, pontos: number) {
   letrasTentadas.push(letra);
 
   if (!getPalavra().includes("_")){
-    alert(`O jogador ${jogadores[indJog].nome} ganhou! \nCom ${jogadores[indJog].pontuacao} pontos!`);
+    //alert(`O jogador ${jogadores[indJog].nome} ganhou! \nCom ${jogadores[indJog].pontuacao} pontos!`);
   }
   
   jogadores[indJog].status = statusJogador.ESPERANDO;

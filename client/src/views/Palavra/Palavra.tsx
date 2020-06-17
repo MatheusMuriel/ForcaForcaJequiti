@@ -9,15 +9,16 @@ const Palavra: React.FC<Props> = ({letrasTentadas}) => {
 
   const [palavraCount, setPalavraCount] = useState(0);
 
-  socket.on('atualizacao_palavra', () => {
+  socket.on('atualizacao_palavra', (data: string[]) => {
     setPalavraCount(palavraCount + 1);
+    setPalavra(data);
   });
 
   const [palavra, setPalavra] = useState<String[]>([]);
 
   useEffect(() => {
     const _palavra = getPalavra();
-    setPalavra(_palavra);
+    //setPalavra(_palavra);
   }, [palavraCount]);
   
   return (

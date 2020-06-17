@@ -1,5 +1,6 @@
 import socketIOClient from "socket.io-client";
 const ENDPOINT = "http://localhost:5000";
+export const socket = socketIOClient(ENDPOINT);
 
 
 export enum statusJogador {
@@ -36,17 +37,18 @@ const jogadores: Jogador[] = [
 ]
 
 export function iniciarNovoGame() {
-  const socket = socketIOClient(ENDPOINT);
     socket.emit("my_message", "Maoe! Hello World!");
     socket.on("my_response", (data: string) => {
       console.log(data);
     });
 }
 
-export function getPalavra() {
+export function getPalavra(): String[] {
+  //const ppl = socket.emit
   const palavraArr = palavraSecreta.split('');
   const palavraMask = palavraArr.map( letra => letrasTentadas.includes(letra) ? letra : '_');
-  return palavraMask;
+  //return palavraMask;
+  return palavraArr;
 }
 
 export function getEnforcamento() {

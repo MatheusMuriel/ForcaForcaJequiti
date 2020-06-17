@@ -13,14 +13,15 @@ def connect(sid, environ):
 @sio.event
 async def my_message(sid, data):
     print('message Recebida', data)
-    #await responder('my_response', 'Respondendo ai', sid)
-    await sio.emit('my_response', 'Respondendo ai', sid)
-    
-    
+    await responder('my_response', 'Respondendo ai', sid)
+    await att_palavra(sid)
 
 @sio.event
 def disconnect(sid):
     print('disconnect ', sid)
+
+async def att_palavra(sid):
+  await sio.emit("atualizacao_palavra", "", sid)    
 
 async def responder(event, message, sid):
   await sio.emit(event, message, sid)

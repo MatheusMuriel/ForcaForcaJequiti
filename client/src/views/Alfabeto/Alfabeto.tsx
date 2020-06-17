@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { girarRoleta } from "../../services/silvioSantos";
+import { girarRoleta, socket } from "../../services/silvioSantos";
 
 interface Letra {
   letra: string,
@@ -151,6 +151,7 @@ const Alfabeto: React.FC<Props> = ({ onLetraClicked }) => {
     const altered_alfabeto = {...alfabeto};
     altered_alfabeto[letra].clicked = true;
     setAlfabeto(altered_alfabeto);
+    socket.emit("my_message", "Maoe! Hello World!");
     onLetraClicked(letra, pontos)
   }
 

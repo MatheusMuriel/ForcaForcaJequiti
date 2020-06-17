@@ -8,9 +8,18 @@ import Placar from "./views/Placar/Placar";
 
 import { iniciarNovoGame, computarTentativa } from "./services/silvioSantos";
 
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "http://localhost:5000";
+
 import "./styles/main.scss";
 
 function App() {
+
+  const [response, setResponse] = useState("");
+
+  useEffect(() => {
+    
+  }, []);
 
   useEffect(() => {
     iniciarNovoGame();

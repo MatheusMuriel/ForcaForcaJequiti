@@ -1,3 +1,7 @@
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "http://localhost:5000";
+
+
 export enum statusJogador {
   JOGANDO = "Jogador da vez",
   ESPERANDO = "Em espera",
@@ -32,7 +36,11 @@ const jogadores: Jogador[] = [
 ]
 
 export function iniciarNovoGame() {
-  
+  const socket = socketIOClient(ENDPOINT);
+    socket.emit("my_message", "Maoe! Hello World!");
+    socket.on("my_response", data => {
+      console.log(data);
+    });
 }
 
 export function getPalavra() {

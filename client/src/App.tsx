@@ -29,7 +29,7 @@ function App() {
 
   return (
     <div className="container">
-      {inRegistro ? (<Registro></Registro>) : (<></>)}
+      {inRegistro && <Registro></Registro>}
 
       <div className={inRegistro ? "container-game blur": "container-game"}>
         <div className="forca-container">

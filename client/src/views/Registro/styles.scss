@@ -1,24 +1,4 @@
 
-
-.formRegistro_old {
-  display: flex;
-  flex-direction: column;
-  background-color: whitesmoke;
-  width: 30%;
-  height: 30%;
-
-  align-items: center;
-  justify-content: center;
-
-  border-style: solid;
-  border-color: black;
-
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  font-family: 'Nanum Gothic', sans-serif;
-  color: black;
-}
-
 .formRegistro {
   display: flex;
   flex-direction: column;
@@ -29,7 +9,7 @@
   z-index: 1; /* Sit on top */
 
   width: 30%;
-  height: 30%;
+  height: 45%;
 
   background: #fff;
   border-radius: 10px;
@@ -301,6 +281,19 @@ iframe {
   line-height: 1.5;
 }
 
+.error {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  color: red;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.nome-input {
+  margin-top: 8px;
+}
+
 /*//////////////////////////////////////////////////////////////////
 [ login ]*/
 
@@ -403,6 +396,10 @@ iframe {
   -o-transition: all 0.4s;
   -moz-transition: all 0.4s;
   transition: all 0.4s;
+}
+
+.login100-form-btn:disabled {
+  background-color: #5e5e5e;
 }
 
 .login100-form-btn {

@@ -12,20 +12,23 @@ enforcamento = 0
 valor_roleta = 0
 letras_tentadas = []
 jogadores = {
-  "jogadorX" : {
+  15 : {
     "nome": "Jogador 01",
     "pontuacao": 0,
-    "status": "JOGANDO"
+    "status": "JOGANDO",
+    "sid": 0
   },
-  "jogadorY" : {
+  36 : {
     "nome": "Jogador 02",
     "pontuacao": 0,
-    "status": "ESPERANDO"
+    "status": "ESPERANDO",
+    "sid": 0
   },
-  "jogadorZ" : {
+  5 : {
     "nome": "Jogador 03",
     "pontuacao": 0,
-    "status": "ESPERANDO"
+    "status": "ESPERANDO",
+    "sid": 0
   }
 }
 
@@ -53,7 +56,6 @@ async def responder(event, message, sid):
 @sio.event
 async def inicar_jogo(sid):
   global jogadores
-  print(jogadores)
   if (sid in jogadores):
     await atts_vira_rodada(sid)
   else: 
@@ -71,21 +73,47 @@ async def atts_vira_rodada(sid):
   await att_enforcamento(sid)
 
 @sio.event
-async def novo_nome(sid, nome):
+async def register_id(sid, dados):
   global jogadores
   jogador = {
-    "nome": nome,
+    "nome": dados["nome"],
     "pontuacao": 0,
-    "status": "ESPERANDO"
+    "status": "ESPERANDO",
+    "sid": sid
   }
-  jogadores[sid] = jogador
+  jogadores[dados["id"]] = jogador
   await informa_novo_jogador(sid)
+
+@sio.event
+async def login_id(sid, _id):
+  global jogadores
+  if _id in jogadores:
+    jogadores[_id]['sid'] = sid
+    await informa_novo_jogador(sid)
+  else:
+    await informa_jogador_nao_encontrado(sid)
+
+@sio.event
+async def gerar_id(sid):
+  global jogadores
+  max_id = max(jogadores, key=int)
+  new_id = max_id + 1
+  await informa_novo_id(sid, new_id)
+  pass
 
 async def ask_novo_jogador(sid):
   await sio.emit("perguntar_novo_jogador", sid=sid)
 
 async def informa_novo_jogador(sid):
   await sio.emit("registrado", sid=sid)
+
+async def informa_novo_id(sid, _id):
+  await sio.emit("novo_id", _id,sid=sid)
+
+async def informa_jogador_nao_encontrado(sid):
+  await sio.emit("jogador_nao_encontrado", sid=sid)
+
+###########################################################
 
 async def att_palavra(sid):
   plvr = mask_palavra()

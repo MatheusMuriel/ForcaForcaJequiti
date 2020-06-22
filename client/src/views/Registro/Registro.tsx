@@ -26,7 +26,7 @@ const Registro = () => {
       <span className="login100-form-title">Bem Vindo</span>
       
       <div className="wrap-input100">
-        <input className="input100" type="number" value={id} onChange={handleChange} ></input>
+        <input className={id ? "input100 has-val" : "input100"} type="number" value={id} onChange={handleChange} ></input>
         <span className="focus-input100" data-placeholder="ID"></span>
       </div>
 

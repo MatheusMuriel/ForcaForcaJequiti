@@ -9,12 +9,16 @@ const Registro = () => {
   const [isRegister, setIsRegister] = useState<Boolean>(false);
   const [naoEncontrado, setNaoEncontrado] = useState<Boolean>(false);
 
-  socket.on("jogador_nao_encontrado", () => {
-    setNaoEncontrado(true);
+  socket.on("jogador_nao_encontrado", (data: any) => {
+    if (data["sid"] === socket.id) {
+      setNaoEncontrado(true);
+    }
   });
 
   socket.on("novo_id", (data: any) => {
-    setID(data);
+    if (data["sid"] === socket.id) {
+      setID(data["id"]);
+    }
   });
 
   function handleChangeID(event: any) {

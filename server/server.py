@@ -32,6 +32,16 @@ jogadores = {
   }
 }
 
+# Ações da iniciação do jogo
+  # Sorteiar palavra
+  # Mostrar dica
+  # Mostrar Painel
+  # Define o jogador da vez
+  # Roda roleta
+
+
+###
+
 @sio.event
 def connect(sid, environ):
   print('connect ', sid)
@@ -49,28 +59,24 @@ async def my_message(sid, data):
   await att_palavra(sid)
 
 async def responder(event, message, sid):
-  await sio.emit(event, message, sid)
+  await sio.emit(event, message, sid=sid)
 
 ######################
 
 @sio.event
 async def inicar_jogo(sid):
-  global jogadores
-  if (sid in jogadores):
+  print(sid)
+  jogador = findJogadorIdBySid(sid)
+  if jogador in jogadores:
     await atts_vira_rodada(sid)
-  else: 
+  else:
     await ask_novo_jogador(sid)
-
 
 @sio.event
 async def tentativa(sid, letra):
-  computar_tentativa(letra, "")
+  jogadorId = findJogadorIdBySid(sid)
+  computar_tentativa(letra, jogadorId)
   await atts_vira_rodada(sid)
-
-async def atts_vira_rodada(sid): 
-  await att_palavra(sid)
-  await att_tentativas(sid)
-  await att_enforcamento(sid)
 
 @sio.event
 async def register_id(sid, dados):
@@ -87,6 +93,7 @@ async def register_id(sid, dados):
 @sio.event
 async def login_id(sid, _id):
   global jogadores
+  _id = int(_id)
   if _id in jogadores:
     jogadores[_id]['sid'] = sid
     await informa_novo_jogador(sid)
@@ -101,43 +108,68 @@ async def gerar_id(sid):
   await informa_novo_id(sid, new_id)
   pass
 
+
+# Atualizações padrão de quando vira a rodada
+async def atts_vira_rodada(sid): 
+  # Verificar se falta só 3 letras
+  await att_palavra(sid)
+  await att_tentativas(sid)
+  await att_enforcamento(sid)
+  await att_placar(sid)
+
 async def ask_novo_jogador(sid):
-  await sio.emit("perguntar_novo_jogador", sid=sid)
+  await sio.emit("perguntar_novo_jogador", data={"sid": sid})
 
 async def informa_novo_jogador(sid):
-  await sio.emit("registrado", sid=sid)
+  await sio.emit("registrado", data={"sid": sid})
+  await atts_vira_rodada(sid)
 
 async def informa_novo_id(sid, _id):
-  await sio.emit("novo_id", _id,sid=sid)
+  await sio.emit("novo_id", data={"sid": sid, "id": _id})
 
 async def informa_jogador_nao_encontrado(sid):
-  await sio.emit("jogador_nao_encontrado", sid=sid)
+  await sio.emit("jogador_nao_encontrado", data={"sid": sid})
 
 ###########################################################
 
 async def att_palavra(sid):
   plvr = mask_palavra()
-  await sio.emit("atualizacao_palavra", plvr, sid)
+  await sio.emit("atualizacao_palavra", plvr, sid=sid)
 
 async def att_tentativas(sid):
-  await sio.emit("atualizacao_tentativas", letras_tentadas, sid)
+  await sio.emit("atualizacao_tentativas", letras_tentadas, sid=sid)
 
 async def att_enforcamento(sid):
-  await sio.emit("atualizacao_enforcamento", enforcamento, sid)
+  await sio.emit("atualizacao_enforcamento", enforcamento, sid=sid)
+
+async def att_placar(sid):
+  
+  await sio.emit("atualizacao_enforcamento", enforcamento, sid=sid)
 
 ##### Controllers #####
 
-def computar_tentativa(letra, jogador):
+def computar_tentativa(letra, jogadorId):
   global enforcamento
+  global jogadores
+  global valor_roleta
+  print(jogadores)
+  
   if (letra in palavra_secreta):
-    print('Acertou')
+    old_pontos = jogadores[jogadorId]["pontuacao"]
+    new_pontos = old_pontos + valor_roleta
+    jogadores[jogadorId]["pontuacao"] = new_pontos
   else:
     enforcamento += 1
-    #Att enforc
   
   letras_tentadas.append(letra)
 
-  # Dar pontos ao jogador
+  proximoJogador = getIdProximoJogador()
+  print(f"Jogador atual {jogadorId}")
+  print(f"Proximo jogador {proximoJogador}")
+  jogadores[jogadorId]["status"] = "ESPERANDO"
+  jogadores[proximoJogador]["status"] = "JOGANDO"
+  #print(jogadores)
+
   # Trocar de jogador
   # Atualizar a roleta
   pass
@@ -154,6 +186,27 @@ def mask_letra(letra):
   else:
     return '_'
 
+def findJogadorIdBySid(sid):
+  global jogadores
+  for key, value in jogadores.items():
+    if value["sid"] == sid:
+      return key
+  return None
+
+def getIdProximoJogador():
+  global jogadores
+  encontrado = False
+
+  listJogadores = list(jogadores.items())
+  if (listJogadores[-1][1]["status"] == "JOGANDO"):
+    return listJogadores[0][0]
+
+  for key, value in listJogadores:
+    if encontrado:
+      return key
+    if value["status"] == "JOGANDO":
+      encontrado = True
+  
 
 if __name__ == '__main__':
   web.run_app(app, host="localhost", port=5000)

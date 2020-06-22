@@ -17,14 +17,17 @@ function App() {
   useEffect(() => {
     socket.emit("inicar_jogo");
 
-    socket.on("perguntar_novo_jogador", () => {
-      setInRegistro(true);
+    socket.on("perguntar_novo_jogador", (data: any) => {
+      if (data["sid"] === socket.id) {
+        setInRegistro(true);
+      }
     })
   }, []);
 
-  socket.on("registrado", () => {
-    console.log('registrado');
-    setInRegistro(false);
+  socket.on("registrado", (data: any) => {
+    if (data["sid"] === socket.id) {
+      setInRegistro(false);
+    }
   })
 
   return (

@@ -4,15 +4,15 @@ export const socket = socketIOClient(ENDPOINT);
 
 
 export enum statusJogador {
-  JOGANDO = "Jogador da vez",
-  ESPERANDO = "Em espera",
-  NULL = "Apenas para debug"
+  JOGANDO = "JOGANDO",
+  ESPERANDO = "ESPERANDO"
 }
 
 export interface Jogador {
   nome: string,
   pontuacao: number,
-  status: statusJogador
+  status: string,
+  sid: string
 }
 
 let enforcamento: number = 0;

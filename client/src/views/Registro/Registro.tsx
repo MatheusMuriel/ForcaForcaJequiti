@@ -5,7 +5,7 @@ import "./styles.scss"
 
 const Registro = () => {
   const [nome, setNome] = useState("");
-  const [id, setID] = useState<number>();
+  const [id, setID] = useState<number|string>('');
   const [isRegister, setIsRegister] = useState<Boolean>(false);
   const [naoEncontrado, setNaoEncontrado] = useState<Boolean>(false);
 

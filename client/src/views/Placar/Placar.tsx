@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { getJogadores, Jogador, statusJogador } from "../../services/silvioSantos";
-import { socket } from "../../services/silvioSantos";
+import { socket, Jogador, statusJogador } from "../../services/silvioSantos";
 
 const Placar = () => {
-  const [jogadores, setJogadores] = useState<Jogador[]>(getJogadores());
+  const [jogadores, setJogadores] = useState<Jogador[]>([]);
 
   socket.on("atualizacao_jogadores", (data: any) => {
-    const jogadores = Object.values(data);
-    const esteJogador = jogadores.find( (j: any) => j.sid === socket.id);
-  })
-
-  useEffect(() => {
-    const jogadores = getJogadores();
+    const jogadores: Jogador[] = Object.values(data);
     setJogadores(jogadores);
-  }, [getJogadores()]);
+  })
 
   return (
     <div>

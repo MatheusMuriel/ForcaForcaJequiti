@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { socket } from "../../services/silvioSantos";
+import { socket, Jogador } from "../../services/silvioSantos";
+
+import './styles.scss';
 
 interface Letra {
   letra: string,
@@ -33,13 +35,6 @@ interface Alfabeto {
   X: Letra, 
   Y: Letra, 
   Z: Letra
-}
-
-interface Jogador {
-  nome: string,
-  pontuacao: number,
-  status: string,
-  sid: string
 }
 
 const Alfabeto = () => {
@@ -180,17 +175,20 @@ const Alfabeto = () => {
     <div>
       <h1>Vc é: {nome}</h1>
       <h1>Valendo: {roleta}</h1>
-      {
-        Object.keys(alfabeto).map(key => (
-          <button 
-            key={key} 
-            onClick={() => handleLetraClick(key)}
-            disabled={alfabeto[key].clicked || !vezDeJogar}
-          >
-            {alfabeto[key].letra}
-          </button>
-        ))
-      }
+      <div className="buttons-container">
+        {
+          Object.keys(alfabeto).map(key => (
+            <button 
+              key={key} 
+              className="btn"
+              onClick={() => handleLetraClick(key)}
+              disabled={alfabeto[key].clicked || !vezDeJogar}
+            >
+              {alfabeto[key].letra}
+            </button>
+          ))
+        }
+      </div>
     </div>
     
   );

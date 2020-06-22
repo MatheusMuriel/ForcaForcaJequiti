@@ -66,7 +66,7 @@ async def responder(event, message, sid):
 
 @sio.event
 async def inicar_jogo(sid):
-  print(sid)
+  global jogadores
   jogador = findJogadorIdBySid(sid)
   if jogador in jogadores:
     await atts_vira_rodada(sid)
@@ -98,6 +98,7 @@ async def login_id(sid, _id):
   if _id in jogadores:
     jogadores[_id]['sid'] = sid
     await informa_novo_jogador(sid)
+    await atts_vira_rodada(sid)
   else:
     await informa_jogador_nao_encontrado(sid)
 

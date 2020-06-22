@@ -2,6 +2,7 @@ from aiohttp import web
 import asyncio
 import socketio
 import time
+import random
 
 sio = socketio.AsyncServer(async_mode="aiohttp", cors_allowed_origins="*")
 app = web.Application()
@@ -12,19 +13,19 @@ enforcamento = 0
 valor_roleta = 0
 letras_tentadas = []
 jogadores = {
-  15 : {
+  1 : {
     "nome": "Jogador 01",
     "pontuacao": 0,
     "status": "JOGANDO",
     "sid": 0
   },
-  36 : {
+  2 : {
     "nome": "Jogador 02",
     "pontuacao": 0,
     "status": "ESPERANDO",
     "sid": 0
   },
-  5 : {
+  3 : {
     "nome": "Jogador 03",
     "pontuacao": 0,
     "status": "ESPERANDO",
@@ -115,7 +116,8 @@ async def atts_vira_rodada(sid):
   await att_palavra(sid)
   await att_tentativas(sid)
   await att_enforcamento(sid)
-  await att_placar(sid)
+  await att_roleta(sid)
+  await att_jogadores(sid)
 
 async def ask_novo_jogador(sid):
   await sio.emit("perguntar_novo_jogador", data={"sid": sid})
@@ -142,9 +144,14 @@ async def att_tentativas(sid):
 async def att_enforcamento(sid):
   await sio.emit("atualizacao_enforcamento", enforcamento, sid=sid)
 
-async def att_placar(sid):
-  
-  await sio.emit("atualizacao_enforcamento", enforcamento, sid=sid)
+async def att_roleta(sid):
+  global valor_roleta
+  await sio.emit("atualizacao_roleta", data={"valor_roleta": valor_roleta})
+  pass
+
+async def att_jogadores(sid):
+  global jogadores
+  await sio.emit("atualizacao_jogadores", data=jogadores)
 
 ##### Controllers #####
 
@@ -152,7 +159,6 @@ def computar_tentativa(letra, jogadorId):
   global enforcamento
   global jogadores
   global valor_roleta
-  print(jogadores)
   
   if (letra in palavra_secreta):
     old_pontos = jogadores[jogadorId]["pontuacao"]
@@ -164,14 +170,11 @@ def computar_tentativa(letra, jogadorId):
   letras_tentadas.append(letra)
 
   proximoJogador = getIdProximoJogador()
-  print(f"Jogador atual {jogadorId}")
-  print(f"Proximo jogador {proximoJogador}")
   jogadores[jogadorId]["status"] = "ESPERANDO"
   jogadores[proximoJogador]["status"] = "JOGANDO"
-  #print(jogadores)
 
-  # Trocar de jogador
-  # Atualizar a roleta
+  girarRoleta()
+
   pass
 
 def mask_palavra(): 
@@ -206,7 +209,12 @@ def getIdProximoJogador():
       return key
     if value["status"] == "JOGANDO":
       encontrado = True
-  
+
+def girarRoleta():
+  global valor_roleta
+  novo_valor = random.randint(1,10) * 50
+  valor_roleta = novo_valor
+
 
 if __name__ == '__main__':
   web.run_app(app, host="localhost", port=5000)

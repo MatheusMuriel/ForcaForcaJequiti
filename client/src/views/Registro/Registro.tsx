@@ -44,20 +44,28 @@ const Registro = () => {
     socket.emit("login_id", id);
   }
 
+  function handleKeyPress(event: any) {
+    if(event.key === 'Enter'){
+      handleLogin()
+    }
+  }
+
   return (
     <div className="formRegistro">
       <span className="login100-form-title">Bem Vindo</span>
 
       <div className="wrap-input100">
         <input className={id ? "input100 has-val" : "input100"} required
-        disabled={!!isRegister} value={id} onChange={handleChangeID}></input>
+          onKeyPress={handleKeyPress} disabled={!!isRegister} value={id} 
+          onChange={handleChangeID}></input>
         <span className="focus-input100" data-placeholder="ID"></span>
       </div>
 
       {(isRegister) && (
         <div className="wrap-input100 nome-input">
           <input className={nome ? "input100 has-val" : "input100"} required
-            type="text" value={nome} onChange={handleChangeNome}></input>
+            onKeyPress={handleKeyPress} type="text" value={nome} 
+            onChange={handleChangeNome}></input>
           <span className="focus-input100" data-placeholder="Nome"></span>
         </div>
       )}

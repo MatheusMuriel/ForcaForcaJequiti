@@ -35,9 +35,17 @@ interface Alfabeto {
   Z: Letra
 }
 
-const Alfabeto = () => {
+interface Jogador {
+  nome: string,
+  pontuacao: number,
+  status: string,
+  sid: string
+}
 
+const Alfabeto = () => {
   const [roleta, setRoleta] = useState(0);
+  const [nome, setNome] = useState('');
+  const [vezDeJogar, setVezDeJogar] = useState(false);
   const [alfabeto, setAlfabeto] = useState<Alfabeto>({
     A: {
       letra: 'A',
@@ -151,8 +159,17 @@ const Alfabeto = () => {
     setAlfabeto(altered_alfabeto);
   })
 
-  socket.on("atualizacao_roleta", (pontos: number) => {
-    setRoleta(pontos);
+  socket.on("atualizacao_roleta", (data: any) => {
+    setRoleta(data["valor_roleta"]);
+  })
+
+  socket.on("atualizacao_jogadores", (data: any) => {
+    const jogadores: Jogador[] = Object.values(data);
+    const esteJogador = jogadores.filter( (j: any) => j.sid === socket.id)[0];
+    if (esteJogador) {
+      setNome(esteJogador.nome);
+      setVezDeJogar(esteJogador.status === "JOGANDO");
+    }
   })
 
   function handleLetraClick(letra: string) {
@@ -161,13 +178,14 @@ const Alfabeto = () => {
 
   return (
     <div>
+      <h1>Vc é: {nome}</h1>
       <h1>Valendo: {roleta}</h1>
       {
         Object.keys(alfabeto).map(key => (
           <button 
             key={key} 
             onClick={() => handleLetraClick(key)}
-            disabled={alfabeto[key].clicked}
+            disabled={alfabeto[key].clicked || !vezDeJogar}
           >
             {alfabeto[key].letra}
           </button>

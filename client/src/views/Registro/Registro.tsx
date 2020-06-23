@@ -4,6 +4,10 @@ import { socket } from "../../services/silvioSantos";
 import "./styles.scss"
 
 const Registro = () => {
+  useEffect(() => {
+    document.getElementById('idCamp')?.focus();
+  }, []);
+
   const [nome, setNome] = useState("");
   const [id, setID] = useState<number|string>('');
   const [isRegister, setIsRegister] = useState<Boolean>(false);
@@ -57,7 +61,7 @@ const Registro = () => {
       <div className="wrap-input100">
         <input className={id ? "input100 has-val" : "input100"} required
           onKeyPress={handleKeyPress} disabled={!!isRegister} value={id} 
-          onChange={handleChangeID}></input>
+          onChange={handleChangeID} id="idCamp" ></input>
         <span className="focus-input100" data-placeholder="ID"></span>
       </div>
 

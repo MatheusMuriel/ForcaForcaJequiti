@@ -173,8 +173,7 @@ const Alfabeto = () => {
 
   return (
     <div>
-      <h1>Vc é: {nome}</h1>
-      <h1>Valendo: {roleta}</h1>
+      <p className="valor-roleta">Valendo: {roleta}</p>
       <div className="buttons-container">
         {
           Object.keys(alfabeto).map(key => (

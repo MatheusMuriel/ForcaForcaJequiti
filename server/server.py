@@ -9,6 +9,7 @@ app = web.Application()
 sio.attach(app)
 
 palavra_secreta = 'BATATA'
+dica = "Tuberculo"
 enforcamento = 0
 valor_roleta = 0
 letras_tentadas = []
@@ -18,19 +19,20 @@ jogadores = {
     "pontuacao": 0,
     "status": "JOGANDO",
     "sid": 0
-  },
-  2 : {
-    "nome": "Jogador 02",
-    "pontuacao": 0,
-    "status": "ESPERANDO",
-    "sid": 0
-  },
-  3 : {
-    "nome": "Jogador 03",
-    "pontuacao": 0,
-    "status": "ESPERANDO",
-    "sid": 0
   }
+  #\,
+  #\2 : {
+  #\  "nome": "Jogador 02",
+  #\  "pontuacao": 0,
+  #\  "status": "ESPERANDO",
+  #\  "sid": 0
+  #\},
+  #\3 : {
+  #\  "nome": "Jogador 03",
+  #\  "pontuacao": 0,
+  #\  "status": "ESPERANDO",
+  #\  "sid": 0
+  #\}
 }
 
 # Ações da iniciação do jogo
@@ -70,13 +72,14 @@ async def inicar_jogo(sid):
   jogador = findJogadorIdBySid(sid)
   if jogador in jogadores:
     await atts_vira_rodada(sid)
+    await informa_inicio_jogo(sid)
   else:
     await ask_novo_jogador(sid)
 
 @sio.event
 async def tentativa(sid, letra):
   jogadorId = findJogadorIdBySid(sid)
-  computar_tentativa(letra, jogadorId)
+  await computar_tentativa(letra, jogadorId)
   await atts_vira_rodada(sid)
 
 @sio.event
@@ -133,11 +136,17 @@ async def informa_novo_id(sid, _id):
 async def informa_jogador_nao_encontrado(sid):
   await sio.emit("jogador_nao_encontrado", data={"sid": sid})
 
+async def informa_vitoria(jogador):
+  await sio.emit("vitoria", data={"jogador": jogador})
+
+async def informa_inicio_jogo(sid):
+  await sio.emit("jogo_iniciado", data={"sid": sid})
+
 ###########################################################
 
 async def att_palavra(sid):
   plvr = mask_palavra()
-  await sio.emit("atualizacao_palavra", plvr, sid=sid)
+  await sio.emit("atualizacao_palavra", data={"palavra": plvr, "dica": dica}, sid=sid)
 
 async def att_tentativas(sid):
   await sio.emit("atualizacao_tentativas", letras_tentadas, sid=sid)
@@ -156,7 +165,7 @@ async def att_jogadores(sid):
 
 ##### Controllers #####
 
-def computar_tentativa(letra, jogadorId):
+async def computar_tentativa(letra, jogadorId):
   global enforcamento
   global jogadores
   global valor_roleta
@@ -169,6 +178,12 @@ def computar_tentativa(letra, jogadorId):
     enforcamento += 1
   
   letras_tentadas.append(letra)
+  isVitoria = verificarVitoria()
+
+  if isVitoria:
+    await informa_vitoria(jogadores[jogadorId])
+    await informa_vitoria(jogadores[jogadorId])
+
 
   proximoJogador = getIdProximoJogador()
   jogadores[jogadorId]["status"] = "ESPERANDO"
@@ -215,6 +230,17 @@ def girarRoleta():
   global valor_roleta
   novo_valor = random.randint(1,10) * 50
   valor_roleta = novo_valor
+
+def verificarVitoria():
+  global palavra_secreta
+  global letras_tentadas
+  
+  for letra in list(palavra_secreta):
+    if letra not in letras_tentadas:
+      return False
+  return True
+
+
 
 
 if __name__ == '__main__':

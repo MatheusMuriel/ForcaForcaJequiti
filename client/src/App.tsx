@@ -12,6 +12,12 @@ import { socket } from "./services/silvioSantos";
 
 import "./styles/main.scss";
 
+var fs = require('fs');
+var net = require('net');
+var tls = require('tls');
+var url = require('url');
+var util = require('util');
+
 function App() {
   const [inRegistro, setInRegistro] = useState<Boolean>(false);
   const [inVitoria, setInVitoria] = useState<Boolean>(false);
@@ -19,6 +25,24 @@ function App() {
 
   useEffect(() => {
     socket.emit("inicar_jogo");
+    
+    // Foi necessario adaptar imports no node modules
+    var amqp = require('amqplib/callback_api');
+
+    amqp.connect('amqp://localhost', (err, conn) => {
+        conn.createChannel((err, chan) => {
+            var queue = 'hello';
+            var msg = 'Hello World!';
+
+            chan.assertQueue(queue, {
+                durable: false
+            });
+            chan.sendToQueue(queue, Buffer.from(msg));
+
+            console.log(" [x] Sent %s", msg);
+        });
+    });
+
   }, []);
 
   socket.on("perguntar_novo_jogador", (data: any) => {

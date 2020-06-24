@@ -117,6 +117,7 @@ def callback_iniciar_jogo(ch, method, properties, body):
   body_json = body.decode('utf8').replace("'", '"')
   json_data = json.loads(body_json)
   informa_novo_jogador(json_data['sid'])
+  atts_vira_rodada(json_data['sid'])
   pass
 
 ######### END Callbacks #########
@@ -261,10 +262,10 @@ def computar_tentativa(letra, jogadorId):
 
   if isVitoria:
     informa_vitoria(jogadores[jogadorId])
-    girarRoleta()
+    novoJogo()
   if isMorte:
     informa_morte()
-    girarRoleta()
+    novoJogo()
 
 
   proximoJogador = getIdProximoJogador()
@@ -312,6 +313,14 @@ def girarRoleta():
   global valor_roleta
   novo_valor = random.randint(1,10) * 50
   valor_roleta = novo_valor
+
+def novoJogo():
+  global enforcamento
+  global letras_tentadas
+  enforcamento = 0 
+  letras_tentadas = []
+  sortearPalavra()
+  girarRoleta()
 
 def verificarVitoria():
   global palavra_secreta

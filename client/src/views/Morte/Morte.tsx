@@ -27,11 +27,13 @@ const Morte = () => {
 
   return (
     <div className="formRegistro">
-      <span className="login100-form-title">Game over :c... A palavra era {palavra}</span>
-      <iframe src="https://giphy.com/embed/nbJUuYFI6s0w0" 
-        width="480" height="215" frameBorder="0" className="giphy-embed" 
-        allowFullScreen></iframe><p><a href="https://giphy.com/gifs/random-fireworks-nbJUuYFI6s0w0">via GIPHY</a></p>
+      <span className="login100-form-title">Game over :c...</span>
+      
+      <iframe src="https://giphy.com/embed/dJYoOVAWf2QkU" 
+        width="480" height="267" frameBorder="0" className="giphy-embed" 
+        allowFullScreen></iframe><p><a href="https://giphy.com/gifs/dJYoOVAWf2QkU">via GIPHY</a></p>
 
+      <span className="login100-form-title">A palavra era "{palavra}"</span>
       <button className="login100-form-btn" onClick={() => handleJogarDnv()}>Jogar denovo</button>
     </div>
   );

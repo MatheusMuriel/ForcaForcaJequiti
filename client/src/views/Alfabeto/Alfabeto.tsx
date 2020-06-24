@@ -154,8 +154,10 @@ const Alfabeto = () => {
         const data = JSON.parse(msg.content.toString());
 
         const altered_alfabeto = {...alfabeto};
+        Object.keys(alfabeto).forEach(l => altered_alfabeto[l].clicked = false )
         data.forEach( (l: string) => altered_alfabeto[l].clicked = true )
         setAlfabeto(altered_alfabeto);
+
       }, { noAck: true });
     });
   });

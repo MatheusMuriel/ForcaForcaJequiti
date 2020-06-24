@@ -7,6 +7,47 @@ const DEV_SERVER_URL = "http://localhost:9000";
 const HTML_FILE_PATH = "index.html";
 
 
+const zerorpc = require("zerorpc");
+const ipc = require('electron').ipcMain;
+const { spawn } = require('child_process');
+
+let ui: any;
+let spawnedChild: any;
+let zerorpcClient: any;
+
+function connectToZeroRPC() {
+    zerorpcClient = new zerorpc.Client();
+    zerorpcClient.connect('tcp://127.0.0.1:4242');
+
+    ipc.on('hello', () => {
+        zerorpcClient.invoke('hello', 'RPC', (error, res, more) => {
+            ui.webContents.send('hello-response', res);
+            // myConsole.log(res);
+        });
+    });
+
+    ipc.on('array', () => {
+        zerorpcClient.invoke('get_array', (error, res, more) => {
+            ui.webContents.send('array-response', res);
+        });
+    });
+
+    ipc.on('object', () => {
+        zerorpcClient.invoke('get_object', (error, res, more) => {
+            ui.webContents.send('object-response', res);
+        });
+    });
+
+    ipc.on('type', (event, val) => {
+        zerorpcClient.invoke('determine_type', val, (error, res, more) => {
+            ui.webContents.send('type-response', res);
+        });
+    });
+}
+
+
+
+
 let win: BrowserWindow | null = null;
 
 

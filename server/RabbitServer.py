@@ -37,6 +37,9 @@ channel.queue_declare(queue='atualizacao_tentativas')
 channel.queue_declare(queue='atualizacao_enforcamento')
 channel.queue_declare(queue='atualizacao_roleta')
 channel.queue_declare(queue='atualizacao_jogadores')
+channel.queue_declare(queue='jogador_nao_encontrado')
+channel.queue_declare(queue='novo_id')
+channel.queue_declare(queue='login')
 
 
 ### EXEMPLO ###
@@ -48,10 +51,67 @@ channel.basic_consume(queue='hello',
                       on_message_callback=callback)
 ### END EXEMPLO ###
 
+######### Callbacks #########
+
+def callback_login_id(ch, method, properties, body):
+  global jogadores
+  _id = int(body)
+  if _id in jogadores:
+    jogadores[_id]['sid'] = _id
+    print('Login feito')
+    #informa_novo_jogador(sid)
+    #atts_vira_rodada(sid)
+  else:
+    informa_jogador_nao_encontrado(sid)
+
+######### END Callbacks #########
+
+
+######### Consumers #########
+
+channel.basic_consume(queue='login', auto_ack=True, on_message_callback=callback_login_id)
+
+######### END Consumers #########
 
 
 
+######### Informadores #########
 
+# Atualizações padrão de quando vira a rodada
+def atts_vira_rodada(sid): 
+  # Verificar se falta só 3 letras
+  att_palavra()
+  att_tentativas()
+  att_enforcamento()
+  att_roleta()
+  att_jogadores()
+
+def ask_novo_jogador(sid):
+  #await sio.emit("perguntar_novo_jogador", data={"sid": sid})
+  pass
+
+def informa_novo_jogador(sid):
+  #await sio.emit("registrado", data={"sid": sid})
+  #await atts_vira_rodada(sid)
+  pass
+
+def informa_novo_id(sid, _id):
+  #await sio.emit("novo_id", data={"sid": sid, "id": _id})
+  pass
+
+def informa_jogador_nao_encontrado(sid):
+  #await sio.emit("jogador_nao_encontrado", data={"sid": sid})
+  pass
+
+def informa_vitoria(jogador):
+  #await sio.emit("vitoria", data={"jogador": jogador})
+  pass
+
+def informa_inicio_jogo(sid):
+  #await sio.emit("jogo_iniciado", data={"sid": sid})
+  pass
+
+######### END Informadores #########
 
 
 ######### Atualizações #########
@@ -169,6 +229,10 @@ def verificarVitoria():
     if letra not in letras_tentadas:
       return False
   return True
+
+def criarCanal(nome):
+  global channel
+  channel.queue_declare(queue=str(nome))
 
 ######### END Funções internas #########
 

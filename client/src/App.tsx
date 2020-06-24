@@ -8,7 +8,7 @@ import Placar from "./views/Placar/Placar";
 import Registro from "./views/Registro/Registro";
 import Vitoria from "./views/Vitoria/Vitoria";
 
-import { socket, amqp } from "./services/silvioSantos";
+import { socket, amqp, sid } from "./services/silvioSantos";
 
 import "./styles/main.scss";
 
@@ -20,6 +20,11 @@ function App() {
   // Foi necessario adaptar imports no node modules
 
   useEffect(() => {
+    if ( sid === 0 ) {
+      setInGame(false);
+      setInRegistro(true);
+    }
+
     socket.emit("inicar_jogo");
     
     amqp.connect('amqp://localhost', (err: any, conn: any) => {
@@ -39,77 +44,67 @@ function App() {
   }, []);
 
 
-
-
-  socket.on("perguntar_novo_jogador", (data: any) => {
-    if (data["sid"] === socket.id) {
-      //setInGame(false);
-      //setInRegistro(true);
-    }
-  });
-
-  amqp.connect('amqp://localhost', (err: any, conn: any) => {
-    conn.createChannel((err: any, chan: any) => {
-      chan.consume('perguntar_novo_jogador', function(msg: any) {
-        const data = JSON.parse(msg.content.toString());
-        console.log(data);
-      }, { noAck: true });
-    });
-  });
-
-
-
+  /** ========================================================================== */
 
 
   socket.on("registrado", (data: any) => {
     if (data["sid"] === socket.id) {
-      setInGame(true);
-      setInRegistro(false);
+      //setInGame(true);
+      //setInRegistro(false);
     }
   });
-
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('registrado', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+        
+        if (data.sid === sid) {
+          setInGame(true);
+          setInRegistro(false);
+        }
+
       }, { noAck: true });
     });
   });
 
 
+  /** ========================================================================== */
 
 
   socket.on("vitoria", (data: any) => {
-    setInGame(false);
-    setInVitoria(true);
+    //setInGame(false);
+    //setInVitoria(true);
   });
-
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('vitoria', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+        setInGame(false);
+        setInVitoria(true);
       }, { noAck: true });
     });
   });
 
 
-
+  /** ========================================================================== */
 
 
   socket.on("jogo_iniciado", (data: any) => {
     if (data["sid"] === socket.id) {
-      setInGame(true);
-      setInVitoria(false);
+      //setInGame(true);
+      //setInVitoria(false);
     }
   });
-
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('jogo_iniciado', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+        
+        if (data.sid === sid) {
+          setInGame(true);
+          setInVitoria(false);
+        }
+
       }, { noAck: true });
     });
   });

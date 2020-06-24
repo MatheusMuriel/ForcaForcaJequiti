@@ -149,9 +149,9 @@ const Alfabeto = () => {
   });
 
   socket.on("atualizacao_tentativas", (letrasTentadas: string[]) => {
-    const altered_alfabeto = {...alfabeto};
-    letrasTentadas.forEach( l => altered_alfabeto[l].clicked = true )
-    setAlfabeto(altered_alfabeto);
+    //const altered_alfabeto = {...alfabeto};
+    //letrasTentadas.forEach( l => altered_alfabeto[l].clicked = true )
+    //setAlfabeto(altered_alfabeto);
   });
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
@@ -161,8 +161,6 @@ const Alfabeto = () => {
         const altered_alfabeto = {...alfabeto};
         data.forEach( l => altered_alfabeto[l].clicked = true )
         setAlfabeto(altered_alfabeto);
-
-        console.log(data);
       }, { noAck: true });
     });
   });

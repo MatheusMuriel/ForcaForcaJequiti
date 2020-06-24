@@ -18,14 +18,14 @@ const Forca = () => {
   const [srcForca, setSrcForca] = useState<string>(forca0);
   
   socket.on("atualizacao_enforcamento", (enforc: number) => {
-    setSrcForca(forcas[enforc]);
+    //setSrcForca(forcas[enforc]);
   });
 
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_enforcamento', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+        setSrcForca(forcas[data]);
       }, { noAck: true });
     });
   });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { socket, amqp } from "../../services/silvioSantos";
+import { socket, amqp, sid, attSid } from "../../services/silvioSantos";
 
 import "./styles.scss"
 
@@ -15,31 +15,40 @@ const Registro = () => {
 
   socket.on("jogador_nao_encontrado", (data: any) => {
     if (data["sid"] === socket.id) {
-      setNaoEncontrado(true);
+      //setNaoEncontrado(true);
     }
   });
-
-  socket.on("novo_id", (data: any) => {
-    if (data["sid"] === socket.id) {
-      setID(data["id"]);
-    }
-  });
-
-
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('jogador_nao_encontrado', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+
+        if (data.sid === sid) {
+          setNaoEncontrado(true);
+        }
+
       }, { noAck: true });
     });
   });
 
+
+
+
+
+  socket.on("novo_id", (data: any) => {
+    if (data["sid"] === socket.id) {
+      //setID(data["id"]);
+    }
+  });
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('novo_id', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+        
+        if (data.sid === sid) {
+          setID(data.id);
+        }
+
       }, { noAck: true });
     });
   });
@@ -67,7 +76,15 @@ const Registro = () => {
   }
 
   function handleLogin() {
-    socket.emit("login_id", id);
+    //socket.emit("login_id", id);
+
+    amqp.connect('amqp://localhost', (err: any, conn: any) => {
+        conn.createChannel((err: any, chan: any) => {
+          chan.sendToQueue('login', Buffer.from(id.toString()));
+        });
+    });
+
+    attSid(id);
   }
 
   function handleKeyPress(event: any) {

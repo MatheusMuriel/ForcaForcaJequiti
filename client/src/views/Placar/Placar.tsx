@@ -7,16 +7,19 @@ const Placar = () => {
   const [jogadores, setJogadores] = useState<Jogador[]>([]);
 
   socket.on("atualizacao_jogadores", (data: any) => {
-    const jogadores: Jogador[] = Object.values(data);
-    const esteJogador = jogadores.filter( (j: any) => j.sid === socket.id)[0];
-    setJogadores(jogadores);
+    //const jogadores: Jogador[] = Object.values(data);
+    //const esteJogador = jogadores.filter( (j: any) => j.sid === socket.id)[0];
+    //setJogadores(jogadores);
   });
 
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_jogadores', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+        
+        const jogadores: Jogador[] = Object.values(data);
+        setJogadores(jogadores);
+
       }, { noAck: true });
     });
   });

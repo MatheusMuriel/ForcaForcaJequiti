@@ -16,16 +16,17 @@ const Vitoria = () => {
   }
 
   socket.on("vitoria", (data: any ) => {
-    console.log(data);
-    const jogador: Jogador = data["jogador"];
-    setVencedor(jogador);
+    //console.log(data);
+    //const jogador: Jogador = data["jogador"];
+    //setVencedor(jogador);
   });
 
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('vitoria', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+        const jogador: Jogador = data.palavra;
+        setVencedor(jogador);
       }, { noAck: true });
     });
   });

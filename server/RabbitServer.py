@@ -15,11 +15,9 @@ jogadores = {
     "sid": 0
   }
 }
+
 # Ações da iniciação do jogo
   # Sorteiar palavra
-  # Mostrar dica
-  # Mostrar Painel
-  # Define o jogador da vez
   # Roda roleta
 ###
 
@@ -36,16 +34,17 @@ channel.queue_declare(queue='atualizacao_palavra')
 channel.queue_declare(queue='atualizacao_tentativas')
 channel.queue_declare(queue='atualizacao_enforcamento')
 channel.queue_declare(queue='atualizacao_roleta')
-channel.queue_declare(queue='atualizacao_jogadores')
+#channel.queue_declare(queue='atualizacao_jogadores')
 channel.queue_declare(queue='jogador_nao_encontrado')
 channel.queue_declare(queue='novo_id')
 channel.queue_declare(queue='gerar_id')
 channel.queue_declare(queue='login')
 channel.queue_declare(queue='register_id')
-
 #channel.queue_declare(queue='tentativa')
 #channel.queue_declare(queue='iniciar_jogo')
 #channel.queue_declare(queue='')
+
+channel.exchange_declare(exchange='atualizacao_jogadores', exchange_type='fanout')
 
 
 ### EXEMPLO ###
@@ -70,8 +69,8 @@ def callback_login_id(ch, method, properties, body):
 
   if _id in jogadores:
     jogadores[_id]['sid'] = _sid
-    informa_novo_jogador(_sid)
     atts_vira_rodada(_sid)
+    informa_novo_jogador(_sid)
   else:
     informa_jogador_nao_encontrado(_sid)
   pass
@@ -101,6 +100,7 @@ def callback_register_id(ch, method, properties, body):
     "sid": json_data['sid']
   }
   jogadores[json_data["id"]] = jogador
+  atts_vira_rodada(json_data['sid'])
   informa_novo_jogador(json_data['sid'])
   pass
 ######### END Callbacks #########
@@ -190,7 +190,10 @@ def att_jogadores():
   global jogadores
   #await sio.emit("atualizacao_jogadores", data=jogadores)
   json_data = json.dumps(jogadores, ensure_ascii=False)
-  channel.basic_publish(exchange='', routing_key='atualizacao_jogadores', body=json_data)
+  
+  #channel.basic_publish(exchange='', routing_key='atualizacao_jogadores', body=json_data)
+  channel.basic_publish(exchange='atualizacao_jogadores', routing_key='', body=json_data)
+
   pass
 
 ######### END Atualizações #########
@@ -275,17 +278,9 @@ def verificarVitoria():
       return False
   return True
 
-def criarCanal(nome):
-  global channel
-  channel.queue_declare(queue=str(nome))
-
 ######### END Funções internas #########
 
-att_palavra()
-att_tentativas()
-att_enforcamento()
-att_roleta()
-att_jogadores()
+girarRoleta()
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
 channel.start_consuming()

@@ -12,10 +12,12 @@ const Placar = () => {
     //setJogadores(jogadores);
   });
 
+  /*
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_jogadores', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
+        console.log(data);
         
         const jogadores: Jogador[] = Object.values(data);
         setJogadores(jogadores);
@@ -23,6 +25,30 @@ const Placar = () => {
       }, { noAck: true });
     });
   });
+  */
+
+
+  amqp.connect('amqp://localhost', function(e: any, conn: any) {
+    conn.createChannel(function(e: any, chan: any) {
+      var exchange = 'atualizacao_jogadores';
+      chan.assertQueue('', {
+        exclusive: true
+      }, (e: any, q: any) =>  {
+        chan.bindQueue(q.queue, exchange, '');
+        chan.consume(q.queue, function(msg: any) {
+          const data = JSON.parse(msg.content.toString());
+          console.log(data);
+          
+          const jogadores: Jogador[] = Object.values(data);
+          setJogadores(jogadores);
+        }, { noAck: true });
+      });
+    });
+  });
+
+
+
+
 
   return (
     <div>

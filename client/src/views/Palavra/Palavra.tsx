@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { socket, amqp } from "../../services/silvioSantos";
 
 import './styles.scss';
+import { strict } from 'assert';
 
 const Palavra = () => {
 
@@ -21,8 +22,8 @@ const Palavra = () => {
   return (
     <div>
       <div className="palavra">
-        {palavra.map( p => (
-          <em className="letra">{p}</em>
+        {palavra.map( (p, i) => (
+          <em key={i.toString()} className="letra">{p}</em>
         ))}
       </div>
       <div className="dica">

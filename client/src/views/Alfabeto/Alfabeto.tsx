@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { socket, Jogador, amqp } from "../../services/silvioSantos";
+import { socket, Jogador, amqp, sid } from "../../services/silvioSantos";
 
 import './styles.scss';
 
@@ -176,7 +176,9 @@ const Alfabeto = () => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_roleta', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
+
         console.log(data);
+
       }, { noAck: true });
     });
   });
@@ -185,24 +187,64 @@ const Alfabeto = () => {
 
 
   socket.on("atualizacao_jogadores", (data: any) => {
+    /**
     const jogadores: Jogador[] = Object.values(data);
     const esteJogador = jogadores.filter( (j: any) => j.sid === socket.id)[0];
     if (esteJogador) {
       setNome(esteJogador.nome);
       setVezDeJogar(esteJogador.status === "JOGANDO");
     }
+    */
   });
+  amqp.connect('amqp://localhost', function(e: any, conn: any) {
+    conn.createChannel(function(e: any, chan: any) {
+      var exchange = 'atualizacao_jogadores';
+      chan.assertQueue('', {
+        exclusive: true
+      }, (e: any, q: any) =>  {
+        chan.bindQueue(q.queue, exchange, '');
+
+        chan.consume(q.queue, function(msg) {
+          const data = JSON.parse(msg.content.toString());
+          const jogadores: Jogador[] = Object.values(data);
+          const esteJogador = jogadores.filter( (j: any) => j.sid === sid)[0];
+          if (esteJogador) {
+            setNome(esteJogador.nome);
+            setVezDeJogar(esteJogador.status === "JOGANDO");
+          }
+        }, { noAck: true });
+      });
+    });
+  });
+
+
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_jogadores', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
+        const jogadores: Jogador[] = Object.values(data);
+        const esteJogador = jogadores.filter( (j: any) => j.sid === sid)[0];
+        if (esteJogador) {
+          setNome(esteJogador.nome);
+          setVezDeJogar(esteJogador.status === "JOGANDO");
+        }
+
       }, { noAck: true });
     });
   });
 
   function handleLetraClick(letra: string) {
-    socket.emit("tentativa", letra);
+    //socket.emit("tentativa", letra);
+
+    amqp.connect('amqp://localhost', (err: any, conn: any) => {
+      conn.createChannel((err: any, chan: any) => {
+        const data = {
+          letra: letra,
+          sid: sid
+        }
+        chan.sendToQueue('tentativa', Buffer.from(JSON.stringify(data)));
+      });
+  });
   }
 
   return (

@@ -24,23 +24,6 @@ function App() {
       setInGame(false);
       setInRegistro(true);
     }
-
-    socket.emit("inicar_jogo");
-    
-    amqp.connect('amqp://localhost', (err: any, conn: any) => {
-        conn.createChannel((err: any, chan: any) => {
-            var queue = 'hello';
-            var msg = 'Hello World!';
-
-            chan.assertQueue(queue, {
-                durable: false
-            });
-            chan.sendToQueue(queue, Buffer.from(msg));
-
-            console.log(" [x] Sent %s", msg);
-        });
-    });
-
   }, []);
 
 

@@ -29,6 +29,7 @@ channel.queue_declare(queue='sala_de_jogo')
 channel.queue_declare(queue='perguntar_novo_jogador')
 channel.queue_declare(queue='registrado')
 channel.queue_declare(queue='vitoria')
+channel.queue_declare(queue='morte')
 channel.queue_declare(queue='jogo_iniciado')
 channel.queue_declare(queue='jogador_nao_encontrado')
 channel.queue_declare(queue='novo_id')
@@ -36,8 +37,8 @@ channel.queue_declare(queue='gerar_id')
 channel.queue_declare(queue='login')
 channel.queue_declare(queue='register_id')
 channel.queue_declare(queue='tentativa')
-#channel.queue_declare(queue='iniciar_jogo')
-#channel.queue_declare(queue='')
+channel.queue_declare(queue='fim_de_jogo')
+channel.queue_declare(queue='comecar_dnv')
 
 
 channel.exchange_declare(exchange='atualizacao_jogadores', exchange_type='fanout')
@@ -75,7 +76,6 @@ def callback_login_id(ch, method, properties, body):
     informa_jogador_nao_encontrado(_sid)
   pass
 
-
 def callback_gerar_id(ch, method, properties, body):
   global jogadores
 
@@ -112,6 +112,13 @@ def callback_tentativa(ch, method, properties, body):
   computar_tentativa(json_data['letra'], jogadorId)
   atts_vira_rodada(json_data['sid'])
   pass
+
+def callback_iniciar_jogo(ch, method, properties, body):
+  body_json = body.decode('utf8').replace("'", '"')
+  json_data = json.loads(body_json)
+  informa_novo_jogador(json_data['sid'])
+  pass
+
 ######### END Callbacks #########
 
 
@@ -121,6 +128,7 @@ channel.basic_consume(queue='login', auto_ack=True, on_message_callback=callback
 channel.basic_consume(queue='gerar_id', auto_ack=True, on_message_callback=callback_gerar_id)
 channel.basic_consume(queue='register_id', auto_ack=True, on_message_callback=callback_register_id)
 channel.basic_consume(queue='tentativa', auto_ack=True, on_message_callback=callback_tentativa)
+channel.basic_consume(queue='comecar_dnv', auto_ack=True, on_message_callback=callback_iniciar_jogo)
 
 ######### END Consumers #########
 
@@ -158,9 +166,31 @@ def informa_jogador_nao_encontrado(sid):
   channel.basic_publish(exchange='', routing_key='jogador_nao_encontrado', body=json_data)
   pass
 
+def informa_fim(motivo):
+  data = { "motivo": motivo }
+  json_data = json.dumps(data, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='fim_de_jogo', body=json_data)
+  pass
+
 def informa_vitoria(jogador):
   #await sio.emit("vitoria", data={"jogador": jogador})
+  informa_fim("VITORIA")
+  
+  data = { "jogador": jogador }
+  json_data = json.dumps(data, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='vitoria', body=json_data)
   pass
+
+def informa_morte():
+  global palavra_secreta
+
+  informa_fim("MORTE")
+
+  data = { "palavra": palavra_secreta }
+  json_data = json.dumps(data, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='morte', body=json_data)
+  pass
+
 
 def informa_inicio_jogo(sid):
   #await sio.emit("jogo_iniciado", data={"sid": sid})
@@ -227,10 +257,14 @@ def computar_tentativa(letra, jogadorId):
   letras_tentadas.append(letra)
 
   isVitoria = verificarVitoria()
+  isMorte = verificarMorte()
 
   if isVitoria:
     informa_vitoria(jogadores[jogadorId])
-    informa_vitoria(jogadores[jogadorId])
+    girarRoleta()
+  if isMorte:
+    informa_morte()
+    girarRoleta()
 
 
   proximoJogador = getIdProximoJogador()
@@ -287,6 +321,15 @@ def verificarVitoria():
     if letra not in letras_tentadas:
       return False
   return True
+
+def verificarMorte():
+  global enforcamento
+  
+  if (enforcamento >= 7):
+    return True
+  else:
+    return False
+
 
 def sortearPalavra():
   global palavra_secreta

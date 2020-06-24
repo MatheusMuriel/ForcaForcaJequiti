@@ -200,7 +200,7 @@ const Alfabeto = () => {
         }
         chan.sendToQueue('tentativa', Buffer.from(JSON.stringify(data)));
       });
-  });
+    });
   }
 
   return (

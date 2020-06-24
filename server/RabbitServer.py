@@ -28,6 +28,15 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost')
 channel = connection.channel()
 
 channel.queue_declare(queue='sala_de_jogo')
+channel.queue_declare(queue='perguntar_novo_jogador')
+channel.queue_declare(queue='registrado')
+channel.queue_declare(queue='vitoria')
+channel.queue_declare(queue='jogo_iniciado')
+channel.queue_declare(queue='atualizacao_palavra')
+channel.queue_declare(queue='atualizacao_tentativas')
+channel.queue_declare(queue='atualizacao_enforcamento')
+channel.queue_declare(queue='atualizacao_roleta')
+channel.queue_declare(queue='atualizacao_jogadores')
 
 
 ### EXEMPLO ###
@@ -67,6 +76,7 @@ def att_enforcamento():
 def att_roleta():
   global valor_roleta
   #await sio.emit("atualizacao_roleta", data={"valor_roleta": valor_roleta})
+  data = { "valor_roleta": valor_roleta }
   json_data = json.dumps(data, ensure_ascii=False)
   channel.basic_publish(exchange='', routing_key='atualizacao_roleta', body=json_data)
   pass
@@ -74,7 +84,7 @@ def att_roleta():
 def att_jogadores():
   global jogadores
   #await sio.emit("atualizacao_jogadores", data=jogadores)
-  json_data = json.dumps(data, ensure_ascii=False)
+  json_data = json.dumps(jogadores, ensure_ascii=False)
   channel.basic_publish(exchange='', routing_key='atualizacao_jogadores', body=json_data)
   pass
 
@@ -84,7 +94,7 @@ def att_jogadores():
 
 ######### Funções internas #########
 
-async def computar_tentativa(letra, jogadorId):
+def computar_tentativa(letra, jogadorId):
   global enforcamento
   global jogadores
   global valor_roleta
@@ -101,8 +111,8 @@ async def computar_tentativa(letra, jogadorId):
   isVitoria = verificarVitoria()
 
   if isVitoria:
-    await informa_vitoria(jogadores[jogadorId])
-    await informa_vitoria(jogadores[jogadorId])
+    informa_vitoria(jogadores[jogadorId])
+    informa_vitoria(jogadores[jogadorId])
 
 
   proximoJogador = getIdProximoJogador()
@@ -163,6 +173,10 @@ def verificarVitoria():
 ######### END Funções internas #########
 
 att_palavra()
+att_tentativas()
+att_enforcamento()
+att_roleta()
+att_jogadores()
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
 channel.start_consuming()

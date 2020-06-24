@@ -152,31 +152,28 @@ const Alfabeto = () => {
     const altered_alfabeto = {...alfabeto};
     letrasTentadas.forEach( l => altered_alfabeto[l].clicked = true )
     setAlfabeto(altered_alfabeto);
-  })
-
-  socket.on("atualizacao_roleta", (data: any) => {
-    setRoleta(data["valor_roleta"]);
-  })
-
-  socket.on("atualizacao_jogadores", (data: any) => {
-    const jogadores: Jogador[] = Object.values(data);
-    const esteJogador = jogadores.filter( (j: any) => j.sid === socket.id)[0];
-    if (esteJogador) {
-      setNome(esteJogador.nome);
-      setVezDeJogar(esteJogador.status === "JOGANDO");
-    }
-  })
-
-
+  });
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_tentativas', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
+
+        const altered_alfabeto = {...alfabeto};
+        data.forEach( l => altered_alfabeto[l].clicked = true )
+        setAlfabeto(altered_alfabeto);
+
         console.log(data);
       }, { noAck: true });
     });
   });
 
+
+
+
+
+  socket.on("atualizacao_roleta", (data: any) => {
+    setRoleta(data["valor_roleta"]);
+  })
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_roleta', function(msg: any) {
@@ -186,6 +183,17 @@ const Alfabeto = () => {
     });
   });
 
+
+
+
+  socket.on("atualizacao_jogadores", (data: any) => {
+    const jogadores: Jogador[] = Object.values(data);
+    const esteJogador = jogadores.filter( (j: any) => j.sid === socket.id)[0];
+    if (esteJogador) {
+      setNome(esteJogador.nome);
+      setVezDeJogar(esteJogador.status === "JOGANDO");
+    }
+  });
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_jogadores', function(msg: any) {

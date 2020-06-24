@@ -217,22 +217,6 @@ const Alfabeto = () => {
     });
   });
 
-
-  amqp.connect('amqp://localhost', (err: any, conn: any) => {
-    conn.createChannel((err: any, chan: any) => {
-      chan.consume('atualizacao_jogadores', function(msg: any) {
-        const data = JSON.parse(msg.content.toString());
-        const jogadores: Jogador[] = Object.values(data);
-        const esteJogador = jogadores.filter( (j: any) => j.sid === sid)[0];
-        if (esteJogador) {
-          setNome(esteJogador.nome);
-          setVezDeJogar(esteJogador.status === "JOGANDO");
-        }
-
-      }, { noAck: true });
-    });
-  });
-
   function handleLetraClick(letra: string) {
     //socket.emit("tentativa", letra);
 

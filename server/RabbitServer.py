@@ -30,21 +30,21 @@ channel.queue_declare(queue='perguntar_novo_jogador')
 channel.queue_declare(queue='registrado')
 channel.queue_declare(queue='vitoria')
 channel.queue_declare(queue='jogo_iniciado')
-channel.queue_declare(queue='atualizacao_palavra')
-channel.queue_declare(queue='atualizacao_tentativas')
-channel.queue_declare(queue='atualizacao_enforcamento')
-channel.queue_declare(queue='atualizacao_roleta')
-#channel.queue_declare(queue='atualizacao_jogadores')
 channel.queue_declare(queue='jogador_nao_encontrado')
 channel.queue_declare(queue='novo_id')
 channel.queue_declare(queue='gerar_id')
 channel.queue_declare(queue='login')
 channel.queue_declare(queue='register_id')
-#channel.queue_declare(queue='tentativa')
+channel.queue_declare(queue='tentativa')
 #channel.queue_declare(queue='iniciar_jogo')
 #channel.queue_declare(queue='')
 
+
 channel.exchange_declare(exchange='atualizacao_jogadores', exchange_type='fanout')
+channel.queue_declare(queue='atualizacao_palavra')
+channel.queue_declare(queue='atualizacao_tentativas')
+channel.queue_declare(queue='atualizacao_enforcamento')
+channel.queue_declare(queue='atualizacao_roleta')
 
 
 ### EXEMPLO ###
@@ -92,7 +92,7 @@ def callback_register_id(ch, method, properties, body):
   
   body_json = body.decode('utf8').replace("'", '"')
   json_data = json.loads(body_json)
-  print(json_data)
+
   jogador = {
     "nome": json_data["nome"],
     "pontuacao": 0,
@@ -103,6 +103,15 @@ def callback_register_id(ch, method, properties, body):
   atts_vira_rodada(json_data['sid'])
   informa_novo_jogador(json_data['sid'])
   pass
+
+def callback_tentativa(ch, method, properties, body):
+  body_json = body.decode('utf8').replace("'", '"')
+  json_data = json.loads(body_json)
+
+  jogadorId = findJogadorIdBySid(json_data['sid'])
+  computar_tentativa(json_data['letra'], jogadorId)
+  atts_vira_rodada(json_data['sid'])
+  pass
 ######### END Callbacks #########
 
 
@@ -111,6 +120,7 @@ def callback_register_id(ch, method, properties, body):
 channel.basic_consume(queue='login', auto_ack=True, on_message_callback=callback_login_id)
 channel.basic_consume(queue='gerar_id', auto_ack=True, on_message_callback=callback_gerar_id)
 channel.basic_consume(queue='register_id', auto_ack=True, on_message_callback=callback_register_id)
+channel.basic_consume(queue='tentativa', auto_ack=True, on_message_callback=callback_tentativa)
 
 ######### END Consumers #########
 

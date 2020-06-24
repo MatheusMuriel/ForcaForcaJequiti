@@ -55,14 +55,19 @@ channel.basic_consume(queue='hello',
 
 def callback_login_id(ch, method, properties, body):
   global jogadores
-  _id = int(body)
+
+  body_json = body.decode('utf8').replace("'", '"')
+  json_data = json.loads(body_json)
+
+  _id = int(json_data['id'])
+  _sid = json_data['sid']
+
   if _id in jogadores:
-    jogadores[_id]['sid'] = _id
-    print('Login feito')
-    #informa_novo_jogador(sid)
-    #atts_vira_rodada(sid)
+    jogadores[_id]['sid'] = _sid
+    informa_novo_jogador(_sid)
+    atts_vira_rodada(_sid)
   else:
-    informa_jogador_nao_encontrado(sid)
+    informa_jogador_nao_encontrado(_sid)
 
 ######### END Callbacks #########
 
@@ -92,7 +97,9 @@ def ask_novo_jogador(sid):
 
 def informa_novo_jogador(sid):
   #await sio.emit("registrado", data={"sid": sid})
-  #await atts_vira_rodada(sid)
+  data = { "sid": sid }
+  json_data = json.dumps(data, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='registrado', body=json_data)
   pass
 
 def informa_novo_id(sid, _id):

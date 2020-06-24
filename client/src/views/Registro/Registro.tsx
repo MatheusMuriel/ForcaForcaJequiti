@@ -77,14 +77,19 @@ const Registro = () => {
 
   function handleLogin() {
     //socket.emit("login_id", id);
+    const sid = (+new Date);
 
     amqp.connect('amqp://localhost', (err: any, conn: any) => {
         conn.createChannel((err: any, chan: any) => {
-          chan.sendToQueue('login', Buffer.from(id.toString()));
+          const data = {
+            id: id,
+            sid: sid
+          }
+          chan.sendToQueue('login', Buffer.from(JSON.stringify(data)));
         });
     });
 
-    attSid(id);
+    attSid(sid);
   }
 
   function handleKeyPress(event: any) {

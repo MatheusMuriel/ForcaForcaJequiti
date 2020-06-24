@@ -41,6 +41,11 @@ channel.queue_declare(queue='jogador_nao_encontrado')
 channel.queue_declare(queue='novo_id')
 channel.queue_declare(queue='gerar_id')
 channel.queue_declare(queue='login')
+channel.queue_declare(queue='register_id')
+
+#channel.queue_declare(queue='tentativa')
+#channel.queue_declare(queue='iniciar_jogo')
+#channel.queue_declare(queue='')
 
 
 ### EXEMPLO ###
@@ -82,6 +87,22 @@ def callback_gerar_id(ch, method, properties, body):
   new_id = max_id + 1
   informa_novo_id(json_data['sid'], new_id)
   pass
+
+def callback_register_id(ch, method, properties, body):
+  global jogadores
+  
+  body_json = body.decode('utf8').replace("'", '"')
+  json_data = json.loads(body_json)
+  print(json_data)
+  jogador = {
+    "nome": json_data["nome"],
+    "pontuacao": 0,
+    "status": "ESPERANDO",
+    "sid": json_data['sid']
+  }
+  jogadores[json_data["id"]] = jogador
+  informa_novo_jogador(json_data['sid'])
+  pass
 ######### END Callbacks #########
 
 
@@ -89,6 +110,7 @@ def callback_gerar_id(ch, method, properties, body):
 
 channel.basic_consume(queue='login', auto_ack=True, on_message_callback=callback_login_id)
 channel.basic_consume(queue='gerar_id', auto_ack=True, on_message_callback=callback_gerar_id)
+channel.basic_consume(queue='register_id', auto_ack=True, on_message_callback=callback_register_id)
 
 ######### END Consumers #########
 

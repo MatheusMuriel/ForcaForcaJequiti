@@ -34,7 +34,6 @@ function App() {
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('registrado', function(msg: any) {
-        console.log('A');
         const data = JSON.parse(msg.content.toString());
         if (data.sid === sid) {
           setInGame(true);

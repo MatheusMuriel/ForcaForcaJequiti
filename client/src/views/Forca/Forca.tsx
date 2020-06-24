@@ -18,12 +18,27 @@ const Forca = () => {
   const [srcForca, setSrcForca] = useState<string>(forca0);
 
 
-  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+  /*amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_enforcamento', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
         setSrcForca(forcas[data]);
       }, { noAck: true });
+    });
+  });*/
+
+  amqp.connect('amqp://localhost', function(e: any, conn: any) {
+    conn.createChannel(function(e: any, chan: any) {
+      var exchange = 'atualizacao_enforcamento';
+      chan.assertQueue('', {
+        exclusive: true
+      }, (e: any, q: any) =>  {
+        chan.bindQueue(q.queue, exchange, '');
+        chan.consume(q.queue, function(msg: any) {
+          const data = JSON.parse(msg.content.toString());          
+          setSrcForca(forcas[data]);
+        }, { noAck: true });
+      });
     });
   });
 

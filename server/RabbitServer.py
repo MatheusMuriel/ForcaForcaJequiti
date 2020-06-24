@@ -9,9 +9,15 @@ valor_roleta = 0
 letras_tentadas = []
 jogadores = {
   1 : {
-    "nome": "Jogador 01",
+    "nome": "Muriel",
     "pontuacao": 0,
     "status": "JOGANDO",
+    "sid": 0
+  },
+  2 : {
+    "nome": "Manhani",
+    "pontuacao": 0,
+    "status": "ESPERANDO",
     "sid": 0
   }
 }
@@ -42,10 +48,14 @@ channel.queue_declare(queue='comecar_dnv')
 
 
 channel.exchange_declare(exchange='atualizacao_jogadores', exchange_type='fanout')
-channel.queue_declare(queue='atualizacao_palavra')
-channel.queue_declare(queue='atualizacao_tentativas')
-channel.queue_declare(queue='atualizacao_enforcamento')
-channel.queue_declare(queue='atualizacao_roleta')
+#channel.queue_declare(queue='atualizacao_palavra')
+channel.exchange_declare(exchange='atualizacao_palavra', exchange_type='fanout')
+#channel.queue_declare(queue='atualizacao_tentativas')
+channel.exchange_declare(exchange='atualizacao_tentativas', exchange_type='fanout')
+#channel.queue_declare(queue='atualizacao_enforcamento')
+channel.exchange_declare(exchange='atualizacao_enforcamento', exchange_type='fanout')
+#channel.queue_declare(queue='atualizacao_roleta')
+channel.exchange_declare(exchange='atualizacao_roleta', exchange_type='fanout')
 
 
 ### EXEMPLO ###
@@ -205,18 +215,24 @@ def att_palavra():
   plvr = mask_palavra()
   data = { "palavra": plvr, "dica": dica }
   json_data = json.dumps(data, ensure_ascii=False)
-  channel.basic_publish(exchange='', routing_key='atualizacao_palavra', body=json_data)
+
+  #channel.basic_publish(exchange='', routing_key='atualizacao_palavra', body=json_data)
+  channel.basic_publish(exchange='atualizacao_palavra', routing_key='', body=json_data)
 
 def att_tentativas():
   #await sio.emit("atualizacao_tentativas", letras_tentadas, sid=sid)
   json_data = json.dumps(letras_tentadas, ensure_ascii=False)
-  channel.basic_publish(exchange='', routing_key='atualizacao_tentativas', body=json_data)
+
+  #channel.basic_publish(exchange='', routing_key='atualizacao_tentativas', body=json_data)
+  channel.basic_publish(exchange='atualizacao_tentativas', routing_key='', body=json_data)
   pass
 
 def att_enforcamento():
   #await sio.emit("atualizacao_enforcamento", enforcamento, sid=sid)
   json_data = json.dumps(enforcamento, ensure_ascii=False)
-  channel.basic_publish(exchange='', routing_key='atualizacao_enforcamento', body=json_data)
+
+  #channel.basic_publish(exchange='', routing_key='atualizacao_enforcamento', body=json_data)
+  channel.basic_publish(exchange='atualizacao_enforcamento', routing_key='', body=json_data)
   pass
 
 def att_roleta():
@@ -224,14 +240,15 @@ def att_roleta():
   #await sio.emit("atualizacao_roleta", data={"valor_roleta": valor_roleta})
   data = { "valor_roleta": valor_roleta }
   json_data = json.dumps(data, ensure_ascii=False)
-  channel.basic_publish(exchange='', routing_key='atualizacao_roleta', body=json_data)
+
+  #channel.basic_publish(exchange='', routing_key='atualizacao_roleta', body=json_data)
+  channel.basic_publish(exchange='atualizacao_roleta', routing_key='', body=json_data)
   pass
 
 def att_jogadores():
   global jogadores
   #await sio.emit("atualizacao_jogadores", data=jogadores)
   json_data = json.dumps(jogadores, ensure_ascii=False)
-  
   #channel.basic_publish(exchange='', routing_key='atualizacao_jogadores', body=json_data)
   channel.basic_publish(exchange='atualizacao_jogadores', routing_key='', body=json_data)
 

@@ -39,6 +39,7 @@ channel.queue_declare(queue='atualizacao_roleta')
 channel.queue_declare(queue='atualizacao_jogadores')
 channel.queue_declare(queue='jogador_nao_encontrado')
 channel.queue_declare(queue='novo_id')
+channel.queue_declare(queue='gerar_id')
 channel.queue_declare(queue='login')
 
 
@@ -68,13 +69,26 @@ def callback_login_id(ch, method, properties, body):
     atts_vira_rodada(_sid)
   else:
     informa_jogador_nao_encontrado(_sid)
+  pass
 
+
+def callback_gerar_id(ch, method, properties, body):
+  global jogadores
+
+  body_json = body.decode('utf8').replace("'", '"')
+  json_data = json.loads(body_json)
+
+  max_id = max(jogadores, key=int)
+  new_id = max_id + 1
+  informa_novo_id(json_data['sid'], new_id)
+  pass
 ######### END Callbacks #########
 
 
 ######### Consumers #########
 
 channel.basic_consume(queue='login', auto_ack=True, on_message_callback=callback_login_id)
+channel.basic_consume(queue='gerar_id', auto_ack=True, on_message_callback=callback_gerar_id)
 
 ######### END Consumers #########
 
@@ -91,10 +105,6 @@ def atts_vira_rodada(sid):
   att_roleta()
   att_jogadores()
 
-def ask_novo_jogador(sid):
-  #await sio.emit("perguntar_novo_jogador", data={"sid": sid})
-  pass
-
 def informa_novo_jogador(sid):
   #await sio.emit("registrado", data={"sid": sid})
   data = { "sid": sid }
@@ -104,10 +114,16 @@ def informa_novo_jogador(sid):
 
 def informa_novo_id(sid, _id):
   #await sio.emit("novo_id", data={"sid": sid, "id": _id})
+  data = { "sid": sid, "id": _id }
+  json_data = json.dumps(data, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='novo_id', body=json_data)
   pass
 
 def informa_jogador_nao_encontrado(sid):
   #await sio.emit("jogador_nao_encontrado", data={"sid": sid})
+  data = { "sid": sid }
+  json_data = json.dumps(data, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='jogador_nao_encontrado', body=json_data)
   pass
 
 def informa_vitoria(jogador):

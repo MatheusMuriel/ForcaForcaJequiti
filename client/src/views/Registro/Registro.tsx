@@ -22,7 +22,6 @@ const Registro = () => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('jogador_nao_encontrado', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-
         if (data.sid === sid) {
           setNaoEncontrado(true);
         }
@@ -68,11 +67,30 @@ const Registro = () => {
 
   function handleGerarID() {
     setIsRegister(true);
-    socket.emit("gerar_id");
+    //socket.emit("gerar_id");
+    amqp.connect('amqp://localhost', (err: any, conn: any) => {
+        conn.createChannel((err: any, chan: any) => {
+          const data = { sid: sid }
+          chan.sendToQueue('gerar_id', Buffer.from(JSON.stringify(data)));
+        });
+    });
   }
 
   function handleRegister() {
-    socket.emit("register_id", {id: id, nome: nome});
+    //socket.emit("register_id", {id: id, nome: nome});
+    if (sid === 0) {
+      attSid(+new Date);
+    }
+    amqp.connect('amqp://localhost', (err: any, conn: any) => {
+        conn.createChannel((err: any, chan: any) => {
+          const data = {
+            id: id,
+            nome: nome,
+            sid: sid
+          }
+          chan.sendToQueue('register_id', Buffer.from(JSON.stringify(data)));
+        });
+    });
   }
 
   function handleLogin() {

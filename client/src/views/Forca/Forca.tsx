@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { socket, amqp } from "../../services/silvioSantos";
+import { amqp } from "../../services/silvioSantos";
 
 import './style.scss';
 
@@ -16,10 +16,7 @@ const Forca = () => {
   const forcas = [forca0, forca1, forca2, forca3, forca4, forca5, forca6, forca7];
   
   const [srcForca, setSrcForca] = useState<string>(forca0);
-  
-  socket.on("atualizacao_enforcamento", (enforc: number) => {
-    //setSrcForca(forcas[enforc]);
-  });
+
 
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {

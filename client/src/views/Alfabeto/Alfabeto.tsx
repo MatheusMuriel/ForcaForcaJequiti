@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { socket, Jogador, amqp, sid } from "../../services/silvioSantos";
+import { Jogador, amqp, sid } from "../../services/silvioSantos";
 
 import './styles.scss';
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { socket, amqp, sid, attSid } from "../../services/silvioSantos";
+import { amqp, sid, attSid } from "../../services/silvioSantos";
 
 import "./styles.scss"
 
@@ -13,11 +13,6 @@ const Registro = () => {
   const [isRegister, setIsRegister] = useState<Boolean>(false);
   const [naoEncontrado, setNaoEncontrado] = useState<Boolean>(false);
 
-  socket.on("jogador_nao_encontrado", (data: any) => {
-    if (data["sid"] === socket.id) {
-      //setNaoEncontrado(true);
-    }
-  });
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('jogador_nao_encontrado', function(msg: any) {
@@ -30,15 +25,6 @@ const Registro = () => {
     });
   });
 
-
-
-
-
-  socket.on("novo_id", (data: any) => {
-    if (data["sid"] === socket.id) {
-      //setID(data["id"]);
-    }
-  });
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('novo_id', function(msg: any) {

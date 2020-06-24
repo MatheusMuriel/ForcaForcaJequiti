@@ -70,8 +70,8 @@ def callback_login_id(ch, method, properties, body):
 
   if _id in jogadores:
     jogadores[_id]['sid'] = _sid
-    atts_vira_rodada(_sid)
     informa_novo_jogador(_sid)
+    atts_vira_rodada(_sid)
   else:
     informa_jogador_nao_encontrado(_sid)
   pass

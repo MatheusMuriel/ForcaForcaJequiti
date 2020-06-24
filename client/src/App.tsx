@@ -9,7 +9,7 @@ import Registro from "./views/Registro/Registro";
 import Vitoria from "./views/Vitoria/Vitoria";
 import Morte from "./views/Morte/Morte";
 
-import { socket, amqp, sid } from "./services/silvioSantos";
+import { amqp, sid } from "./services/silvioSantos";
 
 import "./styles/main.scss";
 
@@ -34,8 +34,8 @@ function App() {
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('registrado', function(msg: any) {
+        console.log('A');
         const data = JSON.parse(msg.content.toString());
-        
         if (data.sid === sid) {
           setInGame(true);
           setInRegistro(false);
@@ -70,8 +70,8 @@ function App() {
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('jogo_iniciado', function(msg: any) {
+        console.log('A');
         const data = JSON.parse(msg.content.toString());
-        
         if (data.sid === sid) {
           setInGame(true);
           setInVitoria(false);

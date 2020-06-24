@@ -148,54 +148,28 @@ const Alfabeto = () => {
     }
   });
 
-  socket.on("atualizacao_tentativas", (letrasTentadas: string[]) => {
-    //const altered_alfabeto = {...alfabeto};
-    //letrasTentadas.forEach( l => altered_alfabeto[l].clicked = true )
-    //setAlfabeto(altered_alfabeto);
-  });
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_tentativas', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
 
         const altered_alfabeto = {...alfabeto};
-        data.forEach( l => altered_alfabeto[l].clicked = true )
+        data.forEach( (l: string) => altered_alfabeto[l].clicked = true )
         setAlfabeto(altered_alfabeto);
       }, { noAck: true });
     });
   });
 
 
-
-
-
-  socket.on("atualizacao_roleta", (data: any) => {
-    setRoleta(data["valor_roleta"]);
-  })
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
       chan.consume('atualizacao_roleta', function(msg: any) {
         const data = JSON.parse(msg.content.toString());
-
-        console.log(data);
-
+        setRoleta(data.valor_roleta);
       }, { noAck: true });
     });
   });
 
-
-
-
-  socket.on("atualizacao_jogadores", (data: any) => {
-    /**
-    const jogadores: Jogador[] = Object.values(data);
-    const esteJogador = jogadores.filter( (j: any) => j.sid === socket.id)[0];
-    if (esteJogador) {
-      setNome(esteJogador.nome);
-      setVezDeJogar(esteJogador.status === "JOGANDO");
-    }
-    */
-  });
   amqp.connect('amqp://localhost', function(e: any, conn: any) {
     conn.createChannel(function(e: any, chan: any) {
       var exchange = 'atualizacao_jogadores';
@@ -218,8 +192,6 @@ const Alfabeto = () => {
   });
 
   function handleLetraClick(letra: string) {
-    //socket.emit("tentativa", letra);
-
     amqp.connect('amqp://localhost', (err: any, conn: any) => {
       conn.createChannel((err: any, chan: any) => {
         const data = {

@@ -288,9 +288,25 @@ def verificarVitoria():
       return False
   return True
 
+def sortearPalavra():
+  global palavra_secreta
+  global dica
+
+  palavras_file = open('palavras.json', 'r')
+  palavras = palavras_file.read()
+  palavras_file.close()
+  json_palavras = json.loads(palavras)
+  magic = random.randint(0, len(json_palavras)-1 )
+
+  palavra_sorteada = json_palavras[magic]
+
+  palavra_secreta = palavra_sorteada['palavra']
+  dica = palavra_sorteada['dica']
+
 ######### END Funções internas #########
 
 girarRoleta()
+sortearPalavra()
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
 channel.start_consuming()

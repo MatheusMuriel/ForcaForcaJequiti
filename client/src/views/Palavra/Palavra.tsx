@@ -13,6 +13,19 @@ const Palavra = () => {
     setDica(data["dica"]);
   });
 
+  var amqp = require('amqplib/callback_api');
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      var queue = 'sala_de_jogo';
+      chan.assertQueue(queue, { durable: false });
+
+      chan.consume(queue, function(msg: string) {
+          console.log(" [x] Received %s", msg.content.toString());
+      }, { noAck: true });
+
+    });
+  });
+
   return (
     <div>
       <div className="palavra">

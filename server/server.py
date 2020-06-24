@@ -20,19 +20,6 @@ jogadores = {
     "status": "JOGANDO",
     "sid": 0
   }
-  #\,
-  #\2 : {
-  #\  "nome": "Jogador 02",
-  #\  "pontuacao": 0,
-  #\  "status": "ESPERANDO",
-  #\  "sid": 0
-  #\},
-  #\3 : {
-  #\  "nome": "Jogador 03",
-  #\  "pontuacao": 0,
-  #\  "status": "ESPERANDO",
-  #\  "sid": 0
-  #\}
 }
 
 # Ações da iniciação do jogo
@@ -41,8 +28,6 @@ jogadores = {
   # Mostrar Painel
   # Define o jogador da vez
   # Roda roleta
-
-
 ###
 
 @sio.event

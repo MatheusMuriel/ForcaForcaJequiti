@@ -29,8 +29,8 @@ function App() {
     // Foi necessario adaptar imports no node modules
     var amqp = require('amqplib/callback_api');
 
-    amqp.connect('amqp://localhost', (err, conn) => {
-        conn.createChannel((err, chan) => {
+    amqp.connect('amqp://localhost', (err: any, conn: any) => {
+        conn.createChannel((err: any, chan: any) => {
             var queue = 'hello';
             var msg = 'Hello World!';
 

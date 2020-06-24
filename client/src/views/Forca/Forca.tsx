@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { socket } from "../../services/silvioSantos";
+import { socket, amqp } from "../../services/silvioSantos";
 
 import './style.scss';
 
@@ -19,6 +19,15 @@ const Forca = () => {
   
   socket.on("atualizacao_enforcamento", (enforc: number) => {
     setSrcForca(forcas[enforc]);
+  });
+
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      chan.consume('atualizacao_enforcamento', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        console.log(data);
+      }, { noAck: true });
+    });
   });
 
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { socket, Jogador } from "../../services/silvioSantos";
+import { socket, Jogador, amqp } from "../../services/silvioSantos";
 
 import './styles.scss';
 
@@ -166,6 +166,34 @@ const Alfabeto = () => {
       setVezDeJogar(esteJogador.status === "JOGANDO");
     }
   })
+
+
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      chan.consume('atualizacao_tentativas', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        console.log(data);
+      }, { noAck: true });
+    });
+  });
+
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      chan.consume('atualizacao_roleta', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        console.log(data);
+      }, { noAck: true });
+    });
+  });
+
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      chan.consume('atualizacao_jogadores', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        console.log(data);
+      }, { noAck: true });
+    });
+  });
 
   function handleLetraClick(letra: string) {
     socket.emit("tentativa", letra);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { socket, Jogador } from "../../services/silvioSantos";
+import { socket, Jogador, amqp } from "../../services/silvioSantos";
 
 import "./styles.scss"
 
@@ -19,6 +19,15 @@ const Vitoria = () => {
     console.log(data);
     const jogador: Jogador = data["jogador"];
     setVencedor(jogador);
+  });
+
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      chan.consume('vitoria', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        console.log(data);
+      }, { noAck: true });
+    });
   });
 
   return (

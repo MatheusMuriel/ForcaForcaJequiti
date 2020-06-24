@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { socket, Jogador, statusJogador } from "../../services/silvioSantos";
+import { socket, Jogador, statusJogador, amqp } from "../../services/silvioSantos";
 
 import './styles.scss'
 
@@ -10,7 +10,16 @@ const Placar = () => {
     const jogadores: Jogador[] = Object.values(data);
     const esteJogador = jogadores.filter( (j: any) => j.sid === socket.id)[0];
     setJogadores(jogadores);
-  })
+  });
+
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      chan.consume('atualizacao_jogadores', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        console.log(data);
+      }, { noAck: true });
+    });
+  });
 
   return (
     <div>

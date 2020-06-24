@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { socket } from "../../services/silvioSantos";
+import { socket, amqp } from "../../services/silvioSantos";
 
 import "./styles.scss"
 
@@ -24,6 +24,28 @@ const Registro = () => {
       setID(data["id"]);
     }
   });
+
+
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      chan.consume('jogador_nao_encontrado', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        console.log(data);
+      }, { noAck: true });
+    });
+  });
+
+  amqp.connect('amqp://localhost', (err: any, conn: any) => {
+    conn.createChannel((err: any, chan: any) => {
+      chan.consume('novo_id', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        console.log(data);
+      }, { noAck: true });
+    });
+  });
+
+
+
 
   function handleChangeID(event: any) {
     const input = event.target.value;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { socket } from "../../services/silvioSantos";
+import { socket, amqp } from "../../services/silvioSantos";
 
 import './styles.scss';
 
@@ -8,21 +8,13 @@ const Palavra = () => {
   const [palavra, setPalavra] = useState<String[]>([]);
   const [dica, setDica] = useState("");
 
-  socket.on('atualizacao_palavra', (data: any) => {
-    setPalavra(data["palavra"]);
-    setDica(data["dica"]);
-  });
-
-  var amqp = require('amqplib/callback_api');
   amqp.connect('amqp://localhost', (err: any, conn: any) => {
     conn.createChannel((err: any, chan: any) => {
-      var queue = 'sala_de_jogo';
-      chan.assertQueue(queue, { durable: false });
-
-      chan.consume(queue, function(msg: string) {
-          console.log(" [x] Received %s", msg.content.toString());
+      chan.consume('atualizacao_palavra', function(msg: any) {
+        const data = JSON.parse(msg.content.toString());
+        setPalavra(data.palavra);
+        setDica(data.dica);
       }, { noAck: true });
-
     });
   });
 

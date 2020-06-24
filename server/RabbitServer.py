@@ -50,24 +50,32 @@ def att_palavra():
   plvr = mask_palavra()
   data = { "palavra": plvr, "dica": dica }
   json_data = json.dumps(data, ensure_ascii=False)
-  channel.basic_publish(exchange='', routing_key='sala_de_jogo', body=json_data)
+  channel.basic_publish(exchange='', routing_key='atualizacao_palavra', body=json_data)
 
 def att_tentativas():
   #await sio.emit("atualizacao_tentativas", letras_tentadas, sid=sid)
+  json_data = json.dumps(letras_tentadas, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='atualizacao_tentativas', body=json_data)
   pass
 
 def att_enforcamento():
   #await sio.emit("atualizacao_enforcamento", enforcamento, sid=sid)
+  json_data = json.dumps(enforcamento, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='atualizacao_enforcamento', body=json_data)
   pass
 
 def att_roleta():
   global valor_roleta
   #await sio.emit("atualizacao_roleta", data={"valor_roleta": valor_roleta})
+  json_data = json.dumps(data, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='atualizacao_roleta', body=json_data)
   pass
 
 def att_jogadores():
   global jogadores
   #await sio.emit("atualizacao_jogadores", data=jogadores)
+  json_data = json.dumps(data, ensure_ascii=False)
+  channel.basic_publish(exchange='', routing_key='atualizacao_jogadores', body=json_data)
   pass
 
 ######### END Atualizações #########
